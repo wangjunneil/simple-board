@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import type { Board, Note } from "@/types";
 import { useBoardContext } from "@/hooks/use-board";
 import ListColumn from "@/components/ListColumn";
@@ -48,6 +48,7 @@ export default function BoardView() {
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleText, setTitleText] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
+  const lastMoveRef = useRef<{ overListId: string; overIndex: number } | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -79,6 +80,7 @@ export default function BoardView() {
   }, [currentBoard, dispatch]);
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
+    lastMoveRef.current = null;
     setActiveId(event.active.id as string);
   }, []);
 
@@ -114,6 +116,12 @@ export default function BoardView() {
         }
         return undefined;
       })();
+
+      const prev = lastMoveRef.current;
+      if (prev && prev.overListId === overListId && prev.overIndex === (overIndex ?? -1)) {
+        return;
+      }
+      lastMoveRef.current = { overListId, overIndex: overIndex ?? -1 };
 
       dispatch({
         type: "MOVE_NOTE",

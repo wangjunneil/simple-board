@@ -25,15 +25,20 @@ export default function NoteCard({
   note,
   boardId,
   listId,
+  listTitle,
 }: {
   note: Note;
   boardId: string;
   listId: string;
+  listTitle: string;
 }) {
   const { dispatch } = useBoardContext();
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(note.text);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const isCompleted =
+    listTitle.toLowerCase() === "done" || listTitle === "已完成";
 
   const {
     attributes,
@@ -123,13 +128,8 @@ export default function NoteCard({
 
   const colorOptions = [
     { value: "", label: "No color" },
-    { value: "#fc3", label: "Yellow" },
-    { value: "#6c6", label: "Green" },
-    { value: "#69f", label: "Blue" },
-    { value: "#f66", label: "Red" },
-    { value: "#c6c", label: "Purple" },
     { value: "#f90", label: "Orange" },
-    { value: "#f9c", label: "Pink" },
+    { value: "#69f", label: "Blue" },
   ];
 
   const classNames = [
@@ -141,8 +141,14 @@ export default function NoteCard({
     .filter(Boolean)
     .join(" ");
 
+  const noteStyle: React.CSSProperties = {
+    ...style,
+    ...(note.color ? { borderLeft: `3px solid ${note.color}` } : {}),
+    ...(isCompleted ? { textDecoration: "line-through", color: "#999" } : {}),
+  };
+
   return (
-    <div ref={setNodeRef} className={classNames} style={{ ...style, ...(note.color ? { borderLeft: `3px solid ${note.color}` } : {}) }}>
+    <div ref={setNodeRef} className={classNames} {...attributes} {...listeners} style={noteStyle}>
       <div className="text" onDoubleClick={handleDoubleClick}>
         {note.text ? renderTextWithLinks(note.text) : <span style={{ color: "#999", fontStyle: "italic" }}>Empty note</span>}
       </div>
@@ -158,14 +164,8 @@ export default function NoteCard({
         />
       )}
       <div className="ops">
-        <span className="teaser" {...attributes} {...listeners} style={{ cursor: "grab" }} />
-        <div className="bulk" style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "nowrap" }}>
-          <a href="#" onClick={(e) => { e.preventDefault(); handleToggleCollapse(); }}>
-            {note.collapsed ? "Expand" : "Collapse"}
-          </a>
-          <a href="#" onClick={(e) => { e.preventDefault(); handleToggleRaw(); }}>
-            {note.raw ? "Card" : "Raw"}
-          </a>
+        <span className="teaser" />
+        <div className="bulk">
           {colorOptions.map((opt) => (
             <button
               key={opt.value}
@@ -186,6 +186,13 @@ export default function NoteCard({
               }}
             />
           ))}
+          <span style={{ color: "#bbb", padding: "0 2px" }}>|</span>
+          <a href="#" onClick={(e) => { e.preventDefault(); handleToggleCollapse(); }}>
+            {note.collapsed ? "Expand" : "Collapse"}
+          </a>
+          <a href="#" onClick={(e) => { e.preventDefault(); handleToggleRaw(); }}>
+            {note.raw ? "Card" : "Raw"}
+          </a>
           <a href="#" className="warn" onClick={(e) => { e.preventDefault(); handleDelete(); }}>
             Delete
           </a>

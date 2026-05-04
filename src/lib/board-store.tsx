@@ -332,7 +332,7 @@ function createInitialState(): BoardState {
   const boards = typeof localStorage !== "undefined" ? loadBoards() : [];
   const activeBoardId = typeof localStorage !== "undefined" ? loadActiveBoardId() : null;
   const theme = typeof localStorage !== "undefined" && loadTheme() || "light";
-  const font = typeof localStorage !== "undefined" && loadFont() || "f-barlow";
+  const font = typeof localStorage !== "undefined" && loadFont() || "f-open-sans";
 
   if (boards.length === 0) {
     const defaultBoard: Board = {

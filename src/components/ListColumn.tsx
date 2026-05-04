@@ -90,22 +90,40 @@ export default function ListColumn({
             <a href="#" onClick={(e) => { e.preventDefault(); handleAddNote(); }}>
               Add note
             </a>
-            {!isFirst && (
+            {!isFirst && isLast && (
               <a
                 href="#"
-                className="mov-list-l half"
+                className="mov-list-l full"
                 onClick={(e) => { e.preventDefault(); onMoveLeft?.(); }}
               >
-                Move left
+                &lt; Move
               </a>
             )}
-            {!isLast && (
+            {!isFirst && !isLast && (
+              <>
+                <a
+                  href="#"
+                  className="mov-list-l half"
+                  onClick={(e) => { e.preventDefault(); onMoveLeft?.(); }}
+                >
+                  &lt; Mo
+                </a>
+                <a
+                  href="#"
+                  className="mov-list-r half"
+                  onClick={(e) => { e.preventDefault(); onMoveRight?.(); }}
+                >
+                  ve &gt;
+                </a>
+              </>
+            )}
+            {isFirst && !isLast && (
               <a
                 href="#"
-                className="mov-list-r half"
+                className="mov-list-r full"
                 onClick={(e) => { e.preventDefault(); onMoveRight?.(); }}
               >
-                Move right
+                Move &gt;
               </a>
             )}
             <a
@@ -120,7 +138,7 @@ export default function ListColumn({
       </div>
       <div className="notes">
         {list.notes.map((note) => (
-          <NoteCard key={note.id} note={note} boardId={boardId} listId={list.id} />
+          <NoteCard key={note.id} note={note} boardId={boardId} listId={list.id} listTitle={list.title} />
         ))}
         {list.notes.length === 0 && (
           <div

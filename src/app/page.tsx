@@ -8,38 +8,6 @@ import type { Board, Font } from "@/types";
 
 function Logo() {
   const { state, dispatch } = useBoardContext();
-
-  return (
-    <div className="logo">
-      <a href="#" onClick={(e) => e.preventDefault()}>
-        SimpleBoard
-      </a>
-      <div className="bulk">
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            dispatch({ type: "SWITCH_BOARD", boardId: "" });
-          }}
-        >
-          Boards
-        </a>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            dispatch({ type: "ADD_BOARD" });
-          }}
-        >
-          New board
-        </a>
-      </div>
-    </div>
-  );
-}
-
-function Config() {
-  const { state, dispatch } = useBoardContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = useCallback(() => {
@@ -80,137 +48,96 @@ function Config() {
     [state.boards, dispatch]
   );
 
-  const handleThemeToggle = useCallback(() => {
-    dispatch({
-      type: "SET_THEME",
-      theme: state.theme === "light" ? "dark" : "light",
-    });
-  }, [state.theme, dispatch]);
-
   const handleSetFont = useCallback(
-    (font: Font) => {
-      dispatch({ type: "SET_FONT", font });
-    },
+    (font: Font) => dispatch({ type: "SET_FONT", font }),
     [dispatch]
   );
 
-  const handleSwitchBoard = useCallback(
-    (boardId: string) => {
-      dispatch({ type: "SWITCH_BOARD", boardId });
-    },
-    [dispatch]
-  );
+  const fonts: [Font, string][] = [
+    ["f-barlow", "Barlow"],
+    ["f-ibm-plex", "IBM Plex"],
+    ["f-open-sans", "Open Sans"],
+    ["f-segoe-ui", "Segoe UI"],
+    ["f-maven-pro", "Maven Pro"],
+  ];
 
-  const handleDeleteBoard = useCallback(
-    (boardId: string) => {
-      if (confirm("Delete this board forever?")) {
-        dispatch({ type: "DELETE_BOARD", boardId });
-      }
-    },
-    [dispatch]
-  );
-
-  const currentBoard = state.boards.find(
-    (b) => b.id === state.activeBoardId
-  );
+  const fontLabels: Record<Font, string> = {
+    ["f-barlow"]: "Barlow",
+    ["f-ibm-plex"]: "IBM Plex",
+    ["f-open-sans"]: "Open Sans",
+    ["f-segoe-ui"]: "Segoe UI",
+    ["f-maven-pro"]: "Maven Pro",
+  };
 
   return (
-    <div className="config">
-      <div className="teaser">
-        <i>Config</i>
-        <u>backups</u>
-      </div>
+    <div className="logo">
+      <a href="#" onClick={(e) => e.preventDefault()}>
+        SimpleBoard
+      </a>
       <div className="bulk">
-        <div className="section">
-          <div className="title"><u>Boards</u></div>
-          <div className="details boards">
-            {state.boards.map((board) => (
-              <a
-                key={board.id}
-                href="#"
-                className={`load-board${board.id === state.activeBoardId ? " active" : ""}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleSwitchBoard(board.id);
-                }}
-                onDoubleClick={(e) => {
-                  e.preventDefault();
-                  handleDeleteBoard(board.id);
-                }}
-              >
-                {board.title}
-              </a>
-            ))}
-          </div>
-        </div>
-        <div className="section">
-          <div className="title"><u>Import / Export</u></div>
-          <div className="details">
+        <a
+          href="#"
+          className="menu-first"
+          onClick={(e) => {
+            e.preventDefault();
+            dispatch({ type: "SWITCH_BOARD", boardId: "" });
+          }}
+        >
+          Boards
+        </a>
+        <div className="menu-group">
+          <span className="menu-label">Import/Export</span>
+          <div className="menu-items">
             <a href="#" onClick={(e) => { e.preventDefault(); handleExport(); }}>
               Export boards
             </a>
             <a href="#" onClick={(e) => { e.preventDefault(); handleImport(); }}>
               Import boards
             </a>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
           </div>
         </div>
-        <div className="section">
-          <div className="title"><u>Preferences</u></div>
-          <div className="details">
-            <a
-              href="#"
-              className="switch-theme"
-              onClick={(e) => {
-                e.preventDefault();
-                handleThemeToggle();
-              }}
-            >
-              <i>Dark mode</i>
-              <b>Light mode</b>
-            </a>
-            <div className="ui-prefs">
-              <div className="f-prefs">
-                <table>
-                  <tbody>
-                    {(
-                      [
-                        ["f-barlow", "Barlow"],
-                        ["f-ibm-plex", "IBM Plex"],
-                        ["f-open-sans", "Open Sans"],
-                        ["f-segoe-ui", "Segoe UI"],
-                        ["f-maven-pro", "Maven Pro"],
-                      ] as [Font, string][]
-                    ).map(([fontKey, label]) => (
-                      <tr key={fontKey} className={`ui-${fontKey}`}>
-                        <td className="name">{label}</td>
-                        <td className="val">
-                          <a
-                            href="#"
-                            className={`switch-font${state.font === fontKey ? " active" : ""}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleSetFont(fontKey);
-                            }}
-                          >
-                            {state.font === fontKey ? "active" : "set"}
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          style={{ display: "none" }}
+          onChange={handleFileChange}
+        />
+        <div className="menu-group">
+          <span className="menu-label">Font: {fontLabels[state.font]}</span>
+          <div className="menu-items">
+            {fonts.map(([fontKey, label]) => (
+              <a
+                key={fontKey}
+                href="#"
+                className={`switch-font${state.font === fontKey ? " active" : ""}`}
+                onClick={(e) => { e.preventDefault(); handleSetFont(fontKey); }}
+              >
+                {label}
+              </a>
+            ))}
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ThemeToggle() {
+  const { state, dispatch } = useBoardContext();
+
+  const handleToggleTheme = useCallback(() => {
+    dispatch({
+      type: "SET_THEME",
+      theme: state.theme === "light" ? "dark" : "light",
+    });
+  }, [state.theme, dispatch]);
+
+  return (
+    <div className="theme-toggle">
+      <button onClick={handleToggleTheme}>
+        {state.theme === "light" ? "\u263E" : "\u2600"}
+      </button>
     </div>
   );
 }
@@ -236,7 +163,10 @@ function NullboardAppInner() {
     <>
       <Logo />
       <BoardView />
-      <Config />
+      <ThemeToggle />
+      <div className="footer">
+        @Copyright <a href="https://wangjun.dev">Calvin Wang</a>{" "}Since 2026 &ndash; 2036
+      </div>
     </>
   );
 }
