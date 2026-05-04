@@ -1,132 +1,102 @@
-# Nullboard
+# Nullboard — Next.js 重构版
 
-Nullboard is a minimalist take on a kanban board / a task list manager, designed to be compact, readable and quick in use.
+极简看板（Kanban）工具。原是单 HTML 应用，现重构为 Next.js 框架。
 
-https://nullboard.io/preview
+## 快速开始
 
-![Nullboard](images/nullboard-example-alt.png)
+```bash
+# 安装依赖
+pnpm install
 
-The name also happens to abbreviate to [NB](https://en.wikipedia.org/wiki/Nota_bene), which I think is a nice touch.
+# 开发模式
+pnpm dev          # → http://localhost:3000
 
-## Dead simple
+# 生产构建 + 启动
+pnpm build        # 构建静态文件
+pnpm start        # 启动生产服务器
+```
 
-* Single-page web app - just one HTML file, an ancient jQuery package and a webfont pack.
-* Can be used completely offline. In fact, it's written exactly with this use in mind.
+> **注意**: 开发模式（Turbopack HMR）通过 ngrok 穿透时可能不工作，请使用 `pnpm build && pnpm start` 生产模式。
 
-## Locally stored
+## 部署
 
-* All data is stored locally, for now using [localStorage](https://developer.mozilla.org/en/docs/Web/API/Window/localStorage).
-* The data can be exported to- or imported from a plain text file in a simple JSON format.
-* The data can also be automatically backed up to a local disk with the help of:
-  * [Nullboard Agent](https://nullboard.io/backups) - a native Windows app
-  * [Nullboard Agent Express Port](https://github.com/justinpchang/nullboard-agent-express) - an express.js-based portable app
-  * [nbagent](https://github.com/luismedel/nbagent) - a version for Unix systems, in Python
+### Vercel
 
-## Beta
+```bash
+# 直接连接 Git 仓库部署，或使用 Vercel CLI
+vercel --prod
+```
 
-Still very much in beta. Caveat emptor and all that.
+### 静态导出（可选）
 
-## UI & UX
+```bash
+pnpm build
+# 输出在 .next/ 目录
+```
 
-The whole thing is largely about making it convenient to use.
+该应用是纯客户端 SPA，所有数据存储在浏览器 localStorage，部署时无需后端服务。
 
-Everything is editable in place, all changes are saved automatically and last 50 revisions are kept for undo/redo:
+## 技术栈
 
-![In-place editing](images/nullboard-inplace-editing.gif)
+| 技术 | 版本 |
+|------|------|
+| Next.js | 16 (App Router) |
+| TypeScript | 5 (strict) |
+| React | 19 |
+| pnpm | 10 |
+| @dnd-kit | 6 (拖拽) |
+| uuid | 14 |
 
-New notes can be quickly added directly where they are needed, e.g. before or after existing notes:
+## 完整功能清单
 
-![Ctrl-add note](images/nullboard-ctrl-add-note.gif)
+### ✅ 已实现
 
-Notes can also be dragged around, including to and from other lists:
+| 功能 | 操作方式 |
+|------|----------|
+| 多看板管理 | Config 面板 → Boards 列表切换、新增、删除 |
+| 列表 CRUD | 标题菜单 → Add note / Move left-right / Delete list |
+| 笔记 CRUD | 双击编辑、≡ 菜单 → Collapse/Raw/Delete |
+| 笔记拖拽排序 | 鼠标拖拽（同列表和跨列表） |
+| 列表拖拽排序 | 鼠标拖拽左右移动 |
+| 原地编辑 | 双击看板标题/列表名/笔记内容 |
+| 自动保存 | 编辑失焦后自动写入 localStorage |
+| 折叠/展开 | 笔记 ≡ 菜单 → Collapse |
+| Raw 纯文本模式 | 笔记 ≡ 菜单 → Raw / Card |
+| 颜色标记 | 笔记 ≡ 菜单 → Yellow/Green/Blue/Red/No color |
+| 暗色/亮色主题 | Config → Preferences → Dark mode / Light mode |
+| 5 种字体切换 | Config → Preferences → Barlow/IBM Plex/Open Sans/Segoe UI/Maven Pro |
+| URL 自动链接 | 笔记中输入 http(s):// URL 自动变为可点击链接 |
+| 撤销/重做 | Ctrl+Z / Ctrl+Shift+Z（或 Board 菜单 Undo/Redo） |
+| 导入看板 | Config → Import / Export boards（JSON 格式） |
+| 键盘快捷键 | Ctrl+Z 撤销, Ctrl+Shift+Z 重做 |
+| 错误边界 | 组件崩溃时显示友好错误提示 + Reload 按钮 |
+| 示例数据 | 首次打开自动创建示例看板 |
 
-![Drag-n-drop](images/nullboard-drag-n-drop.gif)
+### ❌ 未实现（原版已有）
 
-Nearly all controls are hidden by default to reduce visual clutter to its minimum:
+| 功能 | 说明 | 优先级 |
+|------|------|--------|
+| 字体大小调整 | +/- 按钮调整字号，实时显示数值 | 中 |
+| 行高调整 | +/- 按钮调整行高 | 低 |
+| 列表宽度调整 | +/- 按钮调整列宽（200~400px） | 低 |
+| Ctrl+Y 重做 | 快捷键，目前只有 Ctrl+Shift+Z | 低 |
+| Ctrl+Enter 新增笔记 | 编辑完成直接添加下一条笔记 | 中 |
+| Shift+Enter 保存退出 | 原版保存并退出编辑模式 | 低 |
+| Tab 切换编辑焦点 | 跳到上一个/下一个笔记编辑框 | 中 |
+| Alt+Arrow 折叠/展开 | 编辑中的快捷键操作 | 低 |
+| Alt+R 切换 Raw | 编辑中的快捷键 | 低 |
+| Ctrl+Shift+8 插入 • | 编辑中插入项目符号 | 低 |
+| Reveal 链接模式 | 按 CapsLock/Ctrl 高亮所有链接 | 中 |
+| 反引号文件链接 | `` `text` `` → `file:///text` 链接 | 低 |
+| Scroller 同步滚动 | 列表溢出时双滚动条同步 | 低 |
+| Crowded 自适应 | 列表过多时自动限制最大宽度 | 中 |
+| Undo/Redo 按钮显隐 | 无操作时隐藏按钮 | 低 |
+| Auto-backup 备份 | 本地+远程自动备份到服务器 | 低 |
+| 备份状态指示器 | Config 面板显示备份状态 | 低 |
+| About / License 弹窗 | 原版 Logo 菜单中的信息弹窗 | 低 |
+| 版本更新通知 | 新版本时显示更新标记 | 低 |
+| 看板拖拽排序 | Config 面板中拖拽调整顺序 | 低 |
 
-![Hidden controls](images/nullboard-hidden-controls.gif)
+## 原始版本
 
-Longer notes can be collapsed to show just the first line, for even more compact view of the board:
-
-![Collapsed notes](images/nullboard-collapsed-notes.gif)
-
-The default font is [Barlow](https://tribby.com/fonts/barlow/) - it's both narrow *and* still very legible. Absolutely fantastic design!
-
-![Barlow speciment](images/barlow-specimen.png)
-
-Notes can also be set to look a bit different. This is useful for partitioning lists into sections:
-
-![Raw notes](images/nullboard-raw-notes.gif)
-
-Links starting with https:// and http:// are recognized. They will "pulse" on mouse hover and can be opened via the right-click menu.
-
-![Links on hover](images/nullboard-links-on-hover.gif)
-
-Pressing CapsLock will highlight all links and make them left-clickable.
-
-![Links reveal](images/nullboard-links-reveal.gif)
-
-Lists can be moved around as well, though not as flashy as notes:
-
-![List swapping](images/nullboard-list-swap.gif)
-
-The font can be changed; its size and line height can be adjusted:
-
-![Theme and zoom](images/nullboard-ui-preferences.gif)
-
-The color theme can be inverted:
-
-![Dark theme](images/nullboard-dark-theme.gif)
-
-Also:
-
-* Support for multiple boards with near-instant switching
-* Undo/redo for 50 revisions per board (configurable in the code)
-* Keyboard shortcuts, including Tab'ing through notes
-
-## Caveats
-
-* Written for desktop and keyboard/mouse use
-* Essentially untested on mobile devices and against tap/touch input
-* Works in Firefox, tested in Chrome, should work in Safari and may work in Edge (or what it's called now)
-* Uses localStorage for storing boards/lists/notes, so be careful around [clearing your cache](https://stackoverflow.com/questions/9948284/how-persistent-is-localstorage)
-
-You spot a bug, file an issue.
-
-## Dockerized version
-
-See [this fork](https://github.com/rsoper/nullboard).
-
-## Background
-
-Nullboard is something that handles ToDo lists in the way that works really well. For *me* that is.
-
-Tried a lot of options, some were almost *it*, but none was 100%.
-
-**Trello** wasn't bad, but never was comfortable with the idea of storing my data in cloud without any actual need.
-
-**Wekan** looked promising, but ultimately too heavy and had no offline usage support or a local storage option.
-
-**Things** was beautiful, but not the right tool for the job.
-
-**Inkscape** - I kid you not - with a laundry list of text items was actually OK, but didn't scale well.
-
-Ditto for the plain **text files**.
-
-Pieces of **paper** were almost there, but rearranging items can be quite a hassle.
-
-So finally got annoyed enough to sit down and write exactly what I wanted.
-
-And, voilà, Nullboard came out  =>  https://nullboard.io/preview
-
-## License
-
-The [2-clause BSD license](https://opensource.org/licenses/BSD-2-Clause/) with the [Commons Clause](https://commonsclause.com/).
-
-That is, you can use, change and re-distribute it for as long as you don't try and sell it.
-
-## Updates
-
-Primary feed is through [@nullboard](https://twitter.com/nullboard) on Twitter.
-
-The changelog is here => https://nullboard.io/changes
+原始单 HTML 版本保留在 `nullboard.html`，可在浏览器直接打开运行。
