@@ -53,24 +53,25 @@ pnpm build
 
 | 功能 | 操作方式 |
 |------|----------|
-| 多看板管理 | Config 面板 → Boards 列表切换、新增、删除 |
-| 列表 CRUD | 标题菜单 → Add note / Move left-right / Delete list |
-| 笔记 CRUD | 双击编辑、≡ 菜单 → Collapse/Raw/Delete |
-| 笔记拖拽排序 | 鼠标拖拽（同列表和跨列表） |
-| 列表拖拽排序 | 鼠标拖拽左右移动 |
-| 原地编辑 | 双击看板标题/列表名/笔记内容 |
-| 自动保存 | 编辑失焦后自动写入 localStorage |
-| 折叠/展开 | 笔记 ≡ 菜单 → Collapse |
-| Raw 纯文本模式 | 笔记 ≡ 菜单 → Raw / Card |
-| 颜色标记 | 笔记 ≡ 菜单 → Yellow/Green/Blue/Red/No color |
-| 暗色/亮色主题 | Config → Preferences → Dark mode / Light mode |
-| 5 种字体切换 | Config → Preferences → Barlow/IBM Plex/Open Sans/Segoe UI/Maven Pro |
-| URL 自动链接 | 笔记中输入 http(s):// URL 自动变为可点击链接 |
-| 撤销/重做 | Ctrl+Z / Ctrl+Shift+Z（或 Board 菜单 Undo/Redo） |
-| 导入看板 | Config → Import / Export boards（JSON 格式） |
-| 键盘快捷键 | Ctrl+Z 撤销, Ctrl+Shift+Z 重做 |
-| 错误边界 | 组件崩溃时显示友好错误提示 + Reload 按钮 |
-| 示例数据 | 首次打开自动创建示例看板 |
+|| 多看板管理 | Config 面板 → Boards 列表切换、新增、删除 |
+|| 看板列表页 | 扁平卡片显示标题/创建时间/列表数/笔记数、拖拽排序 |
+|| 列表 CRUD | 标题菜单 → Add note / Move left-right / Delete list |
+|| 笔记 CRUD | 双击编辑、≡ 菜单 → Collapse/Raw/Delete |
+|| 笔记跨列表拖拽 | 鼠标拖拽笔记到任意列表（看板卡片） |
+|| 列表左右移动 | 标题菜单 → Move left / Move right 按钮 |
+|| 原地编辑 | 双击看板标题/列表名/笔记内容 |
+|| 自动保存 | 编辑失焦后自动写入 localStorage |
+|| 折叠/展开 | 笔记 ≡ 菜单 → Collapse |
+|| Raw 纯文本模式 | 笔记 ≡ 菜单 → Raw / Card |
+|| 色点颜色选择器 | 8 色圆点选择器（无/黄/绿/蓝/红/紫/橙/粉） |
+|| 暗色/亮色主题 | Config → Preferences → Dark mode / Light mode |
+|| 5 种字体切换 | Config → Preferences → Barlow/IBM Plex/Open Sans/Segoe UI/Maven Pro |
+|| URL 自动链接 | 笔记中输入 http(s):// URL 自动变为可点击链接 |
+|| 撤销/重做 | Ctrl+Z / Ctrl+Shift+Z（或 Board 菜单 Undo/Redo） |
+|| 导入/导出看板 | Config → Import / Export boards（JSON 格式） |
+|| 键盘快捷键 | Ctrl+Z 撤销, Ctrl+Shift+Z 重做 |
+|| 错误边界 | 组件崩溃时显示友好错误提示 + Reload 按钮 |
+|| 示例数据 | 首次打开自动创建示例看板 |
 
 ### ❌ 未实现（原版已有）
 
@@ -95,7 +96,7 @@ pnpm build
 | 备份状态指示器 | Config 面板显示备份状态 | 低 |
 | About / License 弹窗 | 原版 Logo 菜单中的信息弹窗 | 低 |
 | 版本更新通知 | 新版本时显示更新标记 | 低 |
-| 看板拖拽排序 | Config 面板中拖拽调整顺序 | 低 |
+
 
 ## 原始版本
 
