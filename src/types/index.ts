@@ -6,6 +6,7 @@ export interface Note {
   collapsed: boolean;
   raw: boolean;
   color: string;
+  completedAt?: string;
 }
 
 export interface List {

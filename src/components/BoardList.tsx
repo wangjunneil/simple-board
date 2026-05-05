@@ -42,6 +42,15 @@ function SortableBoardItem({
   const totalLists = board.lists.length;
   const totalNotes = board.lists.reduce((sum, l) => sum + l.notes.length, 0);
 
+  const createdDate = (() => {
+    const d = new Date(board.createdAt);
+    if (isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}/${m}/${day}`;
+  })();
+
   return (
     <div
       ref={setNodeRef}
@@ -65,6 +74,9 @@ function SortableBoardItem({
       <div className="board-card-meta">
         {totalLists} lists · {totalNotes} notes
       </div>
+      {createdDate && (
+        <div className="board-card-created">{createdDate}</div>
+      )}
     </div>
   );
 }

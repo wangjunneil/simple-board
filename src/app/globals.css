@@ -316,6 +316,24 @@ body.dragging {
 	position: relative;
 }
 
+.board-back-link {
+	display: inline-block;
+	margin-bottom: 8px;
+	font-size: calc(11rem / 11);
+	color: #888;
+	transition: color 200ms;
+}
+
+.board-back-link:hover {
+	color: #000;
+}
+
+.add-list-disabled {
+	font-size: calc(11rem / 11);
+	color: #bbb;
+	cursor: default;
+}
+
 .board > .head .menu {
 	margin-right: 5px;
 }
@@ -439,10 +457,19 @@ body.dragging {
 	padding-bottom: 6px;
 }
 
-.board .note .text,
-.board .note .edit {
+.board .note .text {
 	padding: 5px 10px 0;
 	margin-right: 15px;
+	min-height: 100%;
+}
+
+.board .note .edit {
+	display: none;
+	border: none;
+	padding: 6px 10px;
+	width: 100%;
+	box-sizing: border-box;
+	resize: none;
 	min-height: 100%;
 }
 
@@ -453,10 +480,15 @@ body.dragging {
 }
 
 /***/
-.board .head .text a,
-.board .note .text a {
+.board .head .text a {
 	color: inherit;
 	cursor: default;
+	transition: none;
+}
+
+.board .note .text a {
+	color: inherit;
+	cursor: pointer;
 	transition: none;
 }
 
@@ -600,6 +632,16 @@ body.dragging {
 }
 
 /***/
+.note-completed-date {
+	position: absolute;
+	bottom: 2px;
+	right: 6px;
+	font-size: calc(8rem / 11);
+	color: #bbb;
+	pointer-events: none;
+}
+
+/***/
 .note-dragster {
 	z-index: 2;
 	position: absolute;
@@ -656,6 +698,7 @@ body.dragging {
 .logo:hover .bulk {
 	height: auto;
 	opacity: 1;
+	overflow: visible;
 }
 
 .logo a.site,
@@ -1324,6 +1367,18 @@ body.dragging {
 	box-shadow: 0 0 2px #fff1 inset;
 }
 
+.theme-dark .board-back-link {
+	color: #777;
+}
+
+.theme-dark .board-back-link:hover {
+	color: #ddd;
+}
+
+.theme-dark .add-list-disabled {
+	color: #555;
+}
+
 /***/
 .theme-dark .board .list {
 	background: #17171a;
@@ -1608,8 +1663,16 @@ body.dragging {
 .board-card-meta {
 	position: absolute;
 	bottom: 6px;
-	right: 12px;
+	left: 18px;
 	font-size: 11px;
+	color: #bbb;
+}
+
+.board-card-created {
+	position: absolute;
+	bottom: 6px;
+	right: 18px;
+	font-size: 10px;
 	color: #bbb;
 }
 
@@ -1695,6 +1758,10 @@ body.dragging {
 	color: #777;
 }
 
+.theme-dark .board-card-created {
+	color: #888;
+}
+
 .theme-dark .board-add-btn {
 	border-color: #555;
 	color: #777;
@@ -1771,4 +1838,126 @@ body.dragging {
 
 .theme-dark .footer a:hover {
 	color: #fff;
+}
+
+.logo .sync-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+  background-color: #ccc;
+}
+
+@keyframes sync-blink {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 1; }
+}
+
+.logo .sync-dot.syncing {
+  animation: sync-blink 0.8s ease-in-out infinite;
+}
+
+.logo .sync-dot.synced {
+  background-color: #4c4;
+}
+
+/***/
+.help-overlay {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.help-overlay > div {
+  background: #fff;
+  margin-top: 60px;
+  padding: 30px 36px 36px;
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  max-width: 520px;
+  width: 100%;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  font-size: calc(12rem / 11);
+  line-height: 1.6;
+}
+
+.help-overlay h2 {
+  font-size: calc(18rem / 11);
+  font-weight: 500;
+  margin: 0 0 16px;
+}
+
+.help-overlay .help-go-boards {
+  display: block;
+  font-size: calc(11rem / 11);
+  color: #1489db;
+  margin-bottom: 12px;
+}
+
+.help-overlay .help-go-boards:hover {
+  color: #0c6eb0;
+}
+
+.theme-dark .help-overlay .help-go-boards {
+  color: #fc2;
+}
+
+.theme-dark .help-overlay .help-go-boards:hover {
+  color: #ffd84d;
+}
+
+.help-overlay h3 {
+  font-size: calc(14rem / 11);
+  font-weight: 500;
+  margin: 16px 0 8px;
+}
+
+.help-overlay ul {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.help-overlay li {
+  margin-bottom: 4px;
+}
+
+.help-overlay b {
+  font-weight: 500;
+}
+
+.help-overlay i {
+  font-style: normal;
+  color: #888;
+}
+
+.help-overlay kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  font-size: calc(11rem / 11);
+  background: #eee;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-family: inherit;
+  margin-right: 4px;
+}
+
+.theme-dark .help-overlay > div {
+  background: #1e1e1e;
+  color: #ddd;
+}
+
+.theme-dark .help-overlay kbd {
+  background: #333;
+  border-color: #555;
+  color: #ddd;
 }

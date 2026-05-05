@@ -268,6 +268,17 @@ function boardsReducer(state: BoardState, action: BoardAction): BoardState {
           : b
       );
       if (!movedNote) return state;
+
+      const targetBoard = state.boards.find((b) => b.id === action.boardId);
+      const targetList = targetBoard?.lists.find((l) => l.id === action.toListId);
+      const isDoneList =
+        targetList &&
+        (targetList.title.toLowerCase() === "done" || targetList.title === "已完成");
+
+      if (isDoneList) {
+        movedNote = { ...movedNote, completedAt: new Date().toISOString(), color: "" };
+      }
+
       return {
         ...state,
         boards: boardsAfterRemove.map((b) =>
@@ -330,7 +341,6 @@ function boardsReducer(state: BoardState, action: BoardAction): BoardState {
 
 function createInitialState(): BoardState {
   const boards = typeof localStorage !== "undefined" ? loadBoards() : [];
-  const activeBoardId = typeof localStorage !== "undefined" ? loadActiveBoardId() : null;
   const theme = typeof localStorage !== "undefined" && loadTheme() || "light";
   const font = typeof localStorage !== "undefined" && loadFont() || "f-open-sans";
 
@@ -382,7 +392,7 @@ function createInitialState(): BoardState {
     };
     return {
       boards: [defaultBoard],
-      activeBoardId: defaultBoard.id,
+      activeBoardId: null,
       theme,
       font,
     };
@@ -390,12 +400,7 @@ function createInitialState(): BoardState {
 
   return {
     boards,
-    activeBoardId:
-      activeBoardId && boards.some((b) => b.id === activeBoardId)
-        ? activeBoardId
-        : activeBoardId
-        ? boards[0].id
-        : null,
+    activeBoardId: null,
     theme,
     font,
   };

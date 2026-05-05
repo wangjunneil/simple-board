@@ -147,11 +147,23 @@ export default function NoteCard({
     ...(isCompleted ? { textDecoration: "line-through", color: "#999" } : {}),
   };
 
+  let completedDateStr = "";
+  if (isCompleted && note.completedAt) {
+    const d = new Date(note.completedAt);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    completedDateStr = `${yyyy}/${mm}/${dd}`;
+  }
+
   return (
     <div ref={setNodeRef} className={classNames} {...attributes} {...listeners} style={noteStyle}>
       <div className="text" onDoubleClick={handleDoubleClick}>
         {note.text ? renderTextWithLinks(note.text) : <span style={{ color: "#999", fontStyle: "italic" }}>Empty note</span>}
       </div>
+      {completedDateStr && (
+        <div className="note-completed-date">{completedDateStr}</div>
+      )}
       {editing && (
         <textarea
           ref={textareaRef}

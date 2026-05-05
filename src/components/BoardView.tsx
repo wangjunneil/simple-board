@@ -76,6 +76,7 @@ export default function BoardView() {
 
   const handleAddList = useCallback(() => {
     if (!currentBoard) return;
+    if (currentBoard.lists.length >= 4) return;
     dispatch({ type: "ADD_LIST", boardId: currentBoard.id });
   }, [currentBoard, dispatch]);
 
@@ -200,6 +201,16 @@ export default function BoardView() {
       onDragEnd={handleDragEnd}
     >
       <div className="board">
+        <a
+          href="#"
+          className="board-back-link"
+          onClick={(e) => {
+            e.preventDefault();
+            dispatch({ type: "SWITCH_BOARD", boardId: "" });
+          }}
+        >
+          &larr; Go to board list
+        </a>
         <div className={`head ${editingTitle ? "editing" : ""}`}>
           <div className="text" onDoubleClick={handleTitleDoubleClick}>
             {currentBoard.title}
@@ -242,7 +253,8 @@ export default function BoardView() {
               >
                 Redo
               </a>
-              <a
+              {currentBoard.lists.length < 4 ? (
+                <a
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
@@ -251,6 +263,9 @@ export default function BoardView() {
               >
                 Add list
               </a>
+              ) : (
+                <span className="add-list-disabled">Add list (max 4)</span>
+              )}
             </div>
           </div>
         </div>

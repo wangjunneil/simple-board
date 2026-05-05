@@ -1,17 +1,18 @@
-# Nullboard — Next.js 重构版
+# SimpleBoard — Next.js 重构版
 
 ## 项目概述
 
-Nullboard 是一款极简的本地存储看板（Kanban）工具。本项目将原始的单一 HTML 应用（`nullboard.html`）重构为 Next.js 16 + TypeScript + pnpm 架构，保留所有原始功能和样式。
+SimpleBoard 是一款极简的本地存储看板（Kanban）工具。本项目将原始的单一 HTML 应用（`nullboard.html`）重构为 Next.js 16 + TypeScript + pnpm 架构，并扩展了 MongoDB 云端同步能力。
 
 ## 技术栈
 
 - **框架**: Next.js 16 (App Router)
 - **语言**: TypeScript (strict mode)
 - **构建工具**: pnpm + Turbopack
-- **状态管理**: React Context + useReducer
+- **状态管理**: React Context + useReducer（含撤销/重做历史栈，最多 50 步）
 - **拖拽**: @dnd-kit (core, sortable, utilities)
-- **存储**: localStorage (客户端持久化)
+- **存储**: localStorage (客户端持久化) + MongoDB Atlas (云端同步)
+- **数据库**: MongoDB Node.js Driver，集合前缀 `sb_`
 - **样式**: 原生 CSS (保留原始 nullboard 全部样式 + 暗色主题)
 
 ## 目录结构
@@ -20,37 +21,65 @@ Nullboard 是一款极简的本地存储看板（Kanban）工具。本项目将�
 nullboard/
 ├── src/
 │   ├── app/
-│   │   ├── globals.css      # 全局样式（从原版提取）
-│   │   ├── layout.tsx       # 根布局
-│   │   └── page.tsx         # 主页面（BoardProvider 入口）
+│   │   ├── api/
+│   │   │   ├── boards/route.ts       # GET/POST 看板数据 (sb_boards)
+│   │   │   └── preferences/route.ts  # GET/POST 用户偏好 (sb_preferences)
+│   │   ├── globals.css               # 全局样式（原版 + 新组件）
+│   │   ├── layout.tsx                # 根布局
+│   │   └── page.tsx                  # 主页面（BoardProvider 入口、Logo、HelpOverlay）
 │   ├── components/
-│   │   ├── BoardView.tsx    # 看板主视图 + @dnd-kit DndContext
-│   │   ├── ListColumn.tsx   # 列表列（可排序笔记容器）
-│   │   ├── NoteCard.tsx     # 笔记卡片（编辑、拖拽、ops 菜单）
-│   │   └── ErrorBoundary.tsx # 错误边界
+│   │   ├── BoardList.tsx             # 看板列表页（网格卡片、排序、新增/删除）
+│   │   ├── BoardView.tsx             # 看板详情视图（列表 + 笔记拖拽）
+│   │   ├── ListColumn.tsx            # 列表列（可排序笔记容器）
+│   │   ├── NoteCard.tsx              # 笔记卡片（编辑、拖拽、ops 菜单）
+│   │   └── ErrorBoundary.tsx         # 错误边界
 │   ├── hooks/
-│   │   └── use-board.ts    # BoardProvider / useBoardContext 导出
+│   │   ├── use-board.ts              # BoardProvider / useBoardContext 导出
+│   │   └── use-sync.ts               # MongoDB 同步 hook（30s 间隔）
 │   ├── lib/
-│   │   ├── board-store.tsx  # 状态管理（useReducer + 撤销/重做）
-│   │   └── storage.ts      # localStorage 封装
+│   │   ├── board-store.tsx           # 状态管理（useReducer + 撤销/重做）
+│   │   ├── mongodb.ts                # MongoDB 客户端单例（服务器端）
+│   │   └── storage.ts                # localStorage 封装 + deviceId
 │   └── types/
-│       └── index.ts        # Board, List, Note 类型 + 全部 Action
-├── extras/                  # 字体文件、图标（保留原始资源）
-├── nullboard.html           # 原始单 HTML 版本（未修改）
-├── AGENTS.md                # 本文件
-└── README.md                # 使用说明
+│       └── index.ts                  # Board, List, Note 类型 + 全部 Action
+├── extras/                           # 字体文件（Barlow, IBM Plex, Open Sans, Maven Pro）
+├── public/extras → extras/           # Next.js 静态资源符号链接
+├── nullboard.html                    # 原始单 HTML 版本（未修改）
+├── AGENTS.md                         # 本文件
+└── README.md                         # 使用说明
 ```
 
 ## 数据流
 
-1. `BoardProvider` 通过 `useReducer` 管理全局状态
-2. `createInitialState()` 从 localStorage 加载数据和配置
-3. 每次 `dispatch` 后 `useEffect` 自动持久化到 localStorage
-4. 所有操作记录到历史栈（最多 50 步），支持撤销/重做
+1. `BoardProvider` 通过 `useReducer` 管理全局状态（boards, activeBoardId, theme, font）
+2. `createInitialState()` 从 localStorage 加载数据作为首屏占位
+3. 挂载后 `useSync` 并行从 MongoDB 拉取看板数据和用户偏好，以远程数据为主覆盖本地
+4. 历史栈（最多 50 步）记录每次 boards 变更，支持 Ctrl+Z / Ctrl+Shift+Z 撤销重做
+5. 每次 `dispatch` 后 `useEffect` 自动持久化到 localStorage
+6. 同步 hook 每 30 秒自动将 boards + preferences 同步到 MongoDB
+
+## MongoDB 数据模型
+
+- **sb_boards**: `{ deviceId, boards, activeBoardId, theme, font, updatedAt }`
+- **sb_preferences**: `{ deviceId, theme, font, updatedAt }`
+- 页面刷新时 MongoDB 为主数据源，离线时 fallback 到 localStorage
 
 ## 核心类型
 
-- `Board` → `List[]` → `Note[]`（与原版数据模型一致）
-- `Note`: id, text, collapsed, raw, color
+- `Board`: id, title, lists, createdAt
 - `List`: id, title, notes
-- `Board`: id, title, lists
+- `Note`: id, text, collapsed, raw, color, completedAt?
+- `Theme`: "light" | "dark"
+- `Font`: "f-barlow" | "f-ibm-plex" | "f-open-sans" | "f-segoe-ui" | "f-maven-pro"
+
+## 功能要点
+
+- 首页为看板列表页（网格卡片），点击进入看板详情
+- 每看板最多 4 个列表
+- DONE/已完成 列表中的笔记自动显示完成日期、重置色点
+- 3 色可选（无色 / 橙色 #f90 / 蓝色 #69f）
+- 笔记 ops 菜单顺序: 色点 → Collapse → Raw → Delete
+- 同步状态圆点: 灰色=未同步, 绿色=已同步, 闪烁=同步中
+- Logo 菜单集成 Boards / Import-Export / Font
+- 右下角主题切换按钮（☾/☀）
+- 底部版权 + [HELP] 帮助入口

@@ -65,3 +65,13 @@ export function loadFont(): Font | null {
   ];
   return fonts.includes(val as Font) ? (val as Font) : null;
 }
+
+const DEVICE_ID_KEY = "nb-device-id";
+
+export function loadDeviceId(): string | null {
+  return localStorage.getItem(DEVICE_ID_KEY);
+}
+
+export function saveDeviceId(id: string): void {
+  localStorage.setItem(DEVICE_ID_KEY, id);
+}
