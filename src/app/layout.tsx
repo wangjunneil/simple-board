@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { PwaRegistration } from "@/components/PwaRegistration";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,6 +18,17 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/site.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "SimpleBoard",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -26,7 +38,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <PwaRegistration />
+      </body>
     </html>
   );
 }
