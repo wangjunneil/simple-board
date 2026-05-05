@@ -3,6 +3,7 @@ import { getPreferencesCollection, isMongoAvailable } from "@/lib/mongodb";
 
 export async function POST(request: NextRequest) {
   if (!isMongoAvailable()) {
+    console.error("POST /api/preferences: MongoDB unavailable (MONGODB_URI not set)");
     return NextResponse.json({ ok: true });
   }
   try {
@@ -12,6 +13,7 @@ export async function POST(request: NextRequest) {
     }
     const collection = await getPreferencesCollection();
     if (!collection) {
+      console.error("POST /api/preferences: failed to get preferences collection");
       return NextResponse.json({ ok: true });
     }
     await collection.updateOne(
@@ -34,6 +36,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   if (!isMongoAvailable()) {
+    console.error("GET /api/preferences: MongoDB unavailable (MONGODB_URI not set)");
     return NextResponse.json(null);
   }
   try {
@@ -43,6 +46,7 @@ export async function GET(request: NextRequest) {
     }
     const collection = await getPreferencesCollection();
     if (!collection) {
+      console.error("GET /api/preferences: failed to get preferences collection");
       return NextResponse.json(null);
     }
     const doc = await collection.findOne({ deviceId });
