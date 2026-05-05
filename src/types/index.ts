@@ -50,6 +50,8 @@ export type BoardAction =
   | { type: "DELETE_NOTE"; boardId: string; listId: string; noteId: string }
   | { type: "UPDATE_NOTE"; boardId: string; listId: string; noteId: string; text: string }
   | { type: "TOGGLE_COLLAPSE"; boardId: string; listId: string; noteId: string }
+  | { type: "EXPAND_ALL_NOTES"; boardId: string }
+  | { type: "COLLAPSE_ALL_NOTES"; boardId: string }
   | { type: "SET_COLOR"; boardId: string; listId: string; noteId: string; color: string }
   | { type: "REORDER_NOTES"; boardId: string; listId: string; noteIds: string[] }
   | { type: "MOVE_NOTE"; boardId: string; fromListId: string; toListId: string; noteId: string; index?: number }

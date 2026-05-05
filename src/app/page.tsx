@@ -62,6 +62,8 @@ function HelpOverlay({ onClose, onGoBoards }: { onClose: () => void; onGoBoards:
           <li><kbd>Enter</kbd> Confirm / Save</li>
           <li><kbd>Escape</kbd> Cancel editing / Close dialogs</li>
           <li><kbd>Tab</kbd> Create new note (when on the last note)</li>
+          <li><kbd>E</kbd> Expand all notes</li>
+          <li><kbd>C</kbd> Collapse all notes</li>
         </ul>
 
         <h3>Import / Export</h3>
@@ -253,23 +255,34 @@ function TopBar() {
 }
 
 function NullboardAppInner() {
-  const { undo, redo, dispatch } = useBoardContext();
+  const { state, undo, redo, dispatch } = useBoardContext();
   const syncStatus = useSync();
   const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      const tag = (document.activeElement?.tagName || "").toLowerCase();
+      const editing = tag === "input" || tag === "textarea";
+
       if (e.key === "z" && (e.ctrlKey || e.metaKey) && e.shiftKey) {
         e.preventDefault();
         redo();
       } else if (e.key === "z" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
         undo();
+      } else if (!editing && state.activeBoardId) {
+        if (e.key === "e") {
+          e.preventDefault();
+          dispatch({ type: "EXPAND_ALL_NOTES", boardId: state.activeBoardId });
+        } else if (e.key === "c") {
+          e.preventDefault();
+          dispatch({ type: "COLLAPSE_ALL_NOTES", boardId: state.activeBoardId });
+        }
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [undo, redo]);
+  }, [undo, redo, state.activeBoardId, dispatch]);
 
   const handleGoBoards = useCallback(() => {
     setShowHelp(false);

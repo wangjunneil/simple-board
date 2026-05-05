@@ -206,6 +206,36 @@ function boardsReducer(state: BoardState, action: BoardAction): BoardState {
             : b
         ),
       };
+    case "EXPAND_ALL_NOTES":
+      return {
+        ...state,
+        boards: state.boards.map((b) =>
+          b.id === action.boardId
+            ? {
+                ...b,
+                lists: b.lists.map((l) => ({
+                  ...l,
+                  notes: l.notes.map((n) => ({ ...n, collapsed: false })),
+                })),
+              }
+            : b
+        ),
+      };
+    case "COLLAPSE_ALL_NOTES":
+      return {
+        ...state,
+        boards: state.boards.map((b) =>
+          b.id === action.boardId
+            ? {
+                ...b,
+                lists: b.lists.map((l) => ({
+                  ...l,
+                  notes: l.notes.map((n) => ({ ...n, collapsed: true })),
+                })),
+              }
+            : b
+        ),
+      };
     case "SET_COLOR":
       return {
         ...state,

@@ -2086,7 +2086,7 @@ body.dragging {
 
   .board .lists {
     white-space: normal;
-    overflow: visible;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -2097,6 +2097,7 @@ body.dragging {
     width: 100% !important;
     max-width: 100%;
     margin: 0 0 8px;
+    overflow: hidden;
   }
 
   .board .list:first-child,
