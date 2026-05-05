@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation";
 import { saveDeviceId } from "@/lib/storage";
 
 export default function LoginPage() {
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(() => {
+    if (typeof window !== "undefined" && window.location.hostname === "simple-board-snowy.vercel.app") {
+      return "admin123";
+    }
+    return "";
+  });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
