@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { signToken, getCookieValue, getClearCookieValue, getPasswords } from "@/lib/auth";
+import { signToken, getCookieValue, getClearCookieValue, getPasswords, getServerDeviceId } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   const passwords = getPasswords();
@@ -16,8 +16,9 @@ export async function POST(request: NextRequest) {
     }
 
     const token = await signToken(matched);
+    const deviceId = await getServerDeviceId(matched);
     return NextResponse.json(
-      { ok: true },
+      { ok: true, deviceId },
       {
         status: 200,
         headers: { "Set-Cookie": getCookieValue(token) },

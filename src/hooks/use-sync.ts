@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useBoardContext } from "@/hooks/use-board";
+import { loadDeviceId } from "@/lib/storage";
 
 export type SyncStatus = "idle" | "syncing" | "synced" | "error";
 
@@ -42,7 +43,7 @@ export function useSync() {
   }, []);
 
   useEffect(() => {
-    const did = "nb-global";
+    const did = loadDeviceId() || "";
     deviceIdRef.current = did;
 
     let isCancelled = false;

@@ -2,16 +2,20 @@
 
 import type { Board, Theme, Font } from "@/types";
 
-const STORAGE_KEYS = {
-  BOARDS: "nb-boards",
-  ACTIVE_BOARD: "nb-active-board",
-  THEME: "nb-theme",
-  FONT: "nb-font",
-} as const;
+const DEVICE_ID_KEY = "nb-device-id";
+
+function getDeviceId(): string {
+  return localStorage.getItem(DEVICE_ID_KEY) || "";
+}
+
+function key(base: string): string {
+  const did = getDeviceId();
+  return did ? `${did}-${base}` : base;
+}
 
 export function saveBoards(boards: Board[]): void {
   try {
-    localStorage.setItem(STORAGE_KEYS.BOARDS, JSON.stringify(boards));
+    localStorage.setItem(key("nb-boards"), JSON.stringify(boards));
   } catch (e) {
     console.error("Failed to save boards:", e);
   }
@@ -19,7 +23,7 @@ export function saveBoards(boards: Board[]): void {
 
 export function loadBoards(): Board[] {
   try {
-    const data = localStorage.getItem(STORAGE_KEYS.BOARDS);
+    const data = localStorage.getItem(key("nb-boards"));
     if (!data) return [];
     const boards: Board[] = JSON.parse(data);
     return boards.map((b) => ({
@@ -33,29 +37,29 @@ export function loadBoards(): Board[] {
 }
 
 export function saveActiveBoardId(id: string): void {
-  localStorage.setItem(STORAGE_KEYS.ACTIVE_BOARD, id);
+  localStorage.setItem(key("nb-active-board"), id);
 }
 
 export function loadActiveBoardId(): string | null {
-  return localStorage.getItem(STORAGE_KEYS.ACTIVE_BOARD);
+  return localStorage.getItem(key("nb-active-board"));
 }
 
 export function saveTheme(theme: Theme): void {
-  localStorage.setItem(STORAGE_KEYS.THEME, theme);
+  localStorage.setItem(key("nb-theme"), theme);
 }
 
 export function loadTheme(): Theme | null {
-  const val = localStorage.getItem(STORAGE_KEYS.THEME);
+  const val = localStorage.getItem(key("nb-theme"));
   if (val === "dark" || val === "light") return val;
   return null;
 }
 
 export function saveFont(font: Font): void {
-  localStorage.setItem(STORAGE_KEYS.FONT, font);
+  localStorage.setItem(key("nb-font"), font);
 }
 
 export function loadFont(): Font | null {
-  const val = localStorage.getItem(STORAGE_KEYS.FONT);
+  const val = localStorage.getItem(key("nb-font"));
   const fonts: Font[] = [
     "f-barlow",
     "f-ibm-plex",
@@ -65,8 +69,6 @@ export function loadFont(): Font | null {
   ];
   return fonts.includes(val as Font) ? (val as Font) : null;
 }
-
-const DEVICE_ID_KEY = "nb-device-id";
 
 export function loadDeviceId(): string | null {
   return localStorage.getItem(DEVICE_ID_KEY);

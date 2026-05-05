@@ -244,8 +244,8 @@ function TopBar() {
       </button>
       <button className="top-bar-btn" onClick={handleLogout} title="Logout">
         <svg viewBox="0 0 16 16" width="16" height="16">
-          <path fill="currentColor" d="M6 12.5a.5.5 0 01.5.5v1.5a.5.5 0 00.5.5H13a1 1 0 001-1v-12a1 1 0 00-1-1H7a.5.5 0 00-.5.5V3a.5.5 0 01-1 0v-1.5A1.5 1.5 0 017 0h6a2 2 0 012 2v12a2 2 0 01-2 2H7a1.5 1.5 0 01-1.5-1.5V13a.5.5 0 01.5-.5z"/>
-          <path fill="currentColor" d="M4.146 8.354a.5.5 0 010-.708l3-3a.5.5 0 11.708.708L5.707 7.5H11.5a.5.5 0 010 1H5.707l2.147 2.146a.5.5 0 01-.708.708l-3-3z"/>
+          <path fill="currentColor" fillRule="evenodd" d="M10 12.5a.5.5 0 01-.5.5h-8a.5.5 0 01-.5-.5v-9a.5.5 0 01.5-.5h8a.5.5 0 01.5.5v2a.5.5 0 001 0v-2A1.5 1.5 0 009.5 2h-8A1.5 1.5 0 000 3.5v9A1.5 1.5 0 001.5 14h8a1.5 1.5 0 001.5-1.5v-2a.5.5 0 00-1 0v2z"/>
+          <path fill="currentColor" fillRule="evenodd" d="M15.854 8.354a.5.5 0 000-.708l-3-3a.5.5 0 00-.708.708L14.293 7.5H5.5a.5.5 0 000 1h8.793l-2.147 2.146a.5.5 0 00.708.708l3-3z"/>
         </svg>
       </button>
     </div>

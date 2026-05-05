@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { saveDeviceId } from "@/lib/storage";
 
 export default function LoginPage() {
   const [password, setPassword] = useState("");
@@ -24,6 +25,10 @@ export default function LoginPage() {
       });
 
       if (res.ok) {
+        const data = await res.json();
+        if (data.deviceId) {
+          saveDeviceId(data.deviceId);
+        }
         router.push("/");
         router.refresh();
       } else {
