@@ -22,6 +22,12 @@ import {
   loadFont,
 } from "@/lib/storage";
 
+const DONE_LIST_PATTERN = /(done|completed|achieved|finished|已完成)/i;
+
+export function isCompletedList(title: string): boolean {
+  return DONE_LIST_PATTERN.test(title);
+}
+
 interface BoardState {
   boards: Board[];
   activeBoardId: string | null;
@@ -271,9 +277,7 @@ function boardsReducer(state: BoardState, action: BoardAction): BoardState {
 
       const targetBoard = state.boards.find((b) => b.id === action.boardId);
       const targetList = targetBoard?.lists.find((l) => l.id === action.toListId);
-      const isDoneList =
-        targetList &&
-        (targetList.title.toLowerCase() === "done" || targetList.title === "已完成");
+      const isDoneList = targetList && isCompletedList(targetList.title);
 
       if (isDoneList) {
         movedNote = { ...movedNote, completedAt: new Date().toISOString(), color: "" };

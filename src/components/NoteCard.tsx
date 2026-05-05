@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import type { Note } from "@/types";
 import { useBoardContext } from "@/hooks/use-board";
+import { isCompletedList } from "@/lib/board-store";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -37,8 +38,7 @@ export default function NoteCard({
   const [editText, setEditText] = useState(note.text);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const isCompleted =
-    listTitle.toLowerCase() === "done" || listTitle === "已完成";
+  const isCompleted = isCompletedList(listTitle);
 
   const {
     attributes,
