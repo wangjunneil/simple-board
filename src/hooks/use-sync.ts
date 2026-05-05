@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useBoardContext } from "@/hooks/use-board";
-import { loadDeviceId, saveDeviceId } from "@/lib/storage";
 
 export type SyncStatus = "idle" | "syncing" | "synced" | "error";
 
@@ -43,14 +42,7 @@ export function useSync() {
   }, []);
 
   useEffect(() => {
-    let did = loadDeviceId();
-    if (!did) {
-      did =
-        typeof crypto !== "undefined" && crypto.randomUUID
-          ? crypto.randomUUID()
-          : Math.random().toString(36).slice(2);
-      saveDeviceId(did);
-    }
+    const did = "nb-global";
     deviceIdRef.current = did;
 
     let isCancelled = false;
