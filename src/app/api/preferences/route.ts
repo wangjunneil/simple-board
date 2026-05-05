@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPreferencesCollection, isMongoAvailable } from "@/lib/mongodb";
+import { getServerDeviceId } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   if (!isMongoAvailable()) {
@@ -7,10 +8,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
   try {
-    const { deviceId, theme, font } = await request.json();
-    if (!deviceId) {
-      return NextResponse.json({ error: "Missing deviceId" }, { status: 400 });
-    }
+    const { theme, font } = await request.json();
+    const deviceId = await getServerDeviceId();
     const collection = await getPreferencesCollection();
     if (!collection) {
       console.error("POST /api/preferences: failed to get preferences collection");
@@ -40,10 +39,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(null);
   }
   try {
-    const deviceId = request.nextUrl.searchParams.get("deviceId");
-    if (!deviceId) {
-      return NextResponse.json({ error: "Missing deviceId" }, { status: 400 });
-    }
+    const deviceId = await getServerDeviceId();
     const collection = await getPreferencesCollection();
     if (!collection) {
       console.error("GET /api/preferences: failed to get preferences collection");

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBoardsCollection, isMongoAvailable } from "@/lib/mongodb";
+import { getServerDeviceId } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   if (!isMongoAvailable()) {
@@ -7,10 +8,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
   try {
-    const { deviceId, boards, activeBoardId, theme, font } = await request.json();
-    if (!deviceId || !Array.isArray(boards)) {
+    const { boards, activeBoardId, theme, font } = await request.json();
+    if (!Array.isArray(boards)) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
+    const deviceId = await getServerDeviceId();
     const collection = await getBoardsCollection();
     if (!collection) {
       console.error("POST /api/boards: failed to get boards collection");
@@ -42,10 +44,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(null);
   }
   try {
-    const deviceId = request.nextUrl.searchParams.get("deviceId");
-    if (!deviceId) {
-      return NextResponse.json({ error: "Missing deviceId" }, { status: 400 });
-    }
+    const deviceId = await getServerDeviceId();
     const collection = await getBoardsCollection();
     if (!collection) {
       console.error("GET /api/boards: failed to get boards collection");

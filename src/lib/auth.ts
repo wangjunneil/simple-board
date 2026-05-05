@@ -9,6 +9,14 @@ async function getKey(password: string): Promise<CryptoKey> {
   return crypto.subtle.importKey("raw", keyData, { name: ALGORITHM, hash: HASH }, false, ["sign", "verify"]);
 }
 
+export async function getServerDeviceId(): Promise<string> {
+  const pw = process.env.ACCESS_PASSWORD || "simpleboard";
+  const enc = new TextEncoder();
+  const hash = await crypto.subtle.digest("SHA-256", enc.encode(pw));
+  const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+  return "nb-" + hex.slice(0, 16);
+}
+
 export async function signToken(password: string): Promise<string> {
   const ts = Date.now().toString();
   const enc = new TextEncoder();
