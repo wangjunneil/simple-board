@@ -1,11 +1,11 @@
 # Graph Report - simple-board  (2026-05-05)
 
 ## Corpus Check
-- 23 files · ~59,250 words
+- 25 files · ~59,395 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 201 nodes · 297 edges · 17 communities detected
+- 204 nodes · 298 edges · 17 communities detected
 - Extraction: 87% EXTRACTED · 13% INFERRED · 0% AMBIGUOUS · INFERRED: 39 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -20,13 +20,13 @@
 - [[_COMMUNITY_Community 7|Community 7]]
 - [[_COMMUNITY_Community 8|Community 8]]
 - [[_COMMUNITY_Community 9|Community 9]]
-- [[_COMMUNITY_Community 19|Community 19]]
-- [[_COMMUNITY_Community 20|Community 20]]
 - [[_COMMUNITY_Community 21|Community 21]]
 - [[_COMMUNITY_Community 22|Community 22]]
 - [[_COMMUNITY_Community 23|Community 23]]
 - [[_COMMUNITY_Community 24|Community 24]]
 - [[_COMMUNITY_Community 25|Community 25]]
+- [[_COMMUNITY_Community 26|Community 26]]
+- [[_COMMUNITY_Community 27|Community 27]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `POST()` - 12 edges
@@ -99,31 +99,31 @@ Nodes (1): ErrorBoundary
 Cohesion: 0.4
 Nodes (3): SortableBoardItem(), LoginPage(), SimpleBoard Board List Page Screenshot — grid of two kanban board cards
 
-### Community 19 - "Community 19"
+### Community 21 - "Community 21"
 Cohesion: 1.0
 Nodes (1): SimpleBoard Favicon 16x16
 
-### Community 20 - "Community 20"
+### Community 22 - "Community 22"
 Cohesion: 1.0
 Nodes (1): SimpleBoard Android Chrome App Icon (192x192)
 
-### Community 21 - "Community 21"
+### Community 23 - "Community 23"
 Cohesion: 1.0
 Nodes (1): Apple Touch Icon - SimpleBoard App Icon
 
-### Community 22 - "Community 22"
+### Community 24 - "Community 24"
 Cohesion: 1.0
 Nodes (1): SimpleBoard PWA App Icon (512x512)
 
-### Community 23 - "Community 23"
+### Community 25 - "Community 25"
 Cohesion: 1.0
 Nodes (1): SimpleBoard Favicon 32x32 - Kanban Board App Icon
 
-### Community 24 - "Community 24"
+### Community 26 - "Community 26"
 Cohesion: 1.0
 Nodes (1): Nullboard Favicon (16×16)
 
-### Community 25 - "Community 25"
+### Community 27 - "Community 27"
 Cohesion: 1.0
 Nodes (1): SimpleBoard App Icon (16x16 Favicon)
 
@@ -132,28 +132,28 @@ Nodes (1): SimpleBoard App Icon (16x16 Favicon)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 8`** (6 nodes): `ErrorBoundary`, `.componentDidCatch()`, `.constructor()`, `.getDerivedStateFromError()`, `.render()`, `ErrorBoundary.tsx`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 19`** (1 nodes): `SimpleBoard Favicon 16x16`
+- **Thin community `Community 21`** (1 nodes): `SimpleBoard Favicon 16x16`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 20`** (1 nodes): `SimpleBoard Android Chrome App Icon (192x192)`
+- **Thin community `Community 22`** (1 nodes): `SimpleBoard Android Chrome App Icon (192x192)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 21`** (1 nodes): `Apple Touch Icon - SimpleBoard App Icon`
+- **Thin community `Community 23`** (1 nodes): `Apple Touch Icon - SimpleBoard App Icon`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 22`** (1 nodes): `SimpleBoard PWA App Icon (512x512)`
+- **Thin community `Community 24`** (1 nodes): `SimpleBoard PWA App Icon (512x512)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 23`** (1 nodes): `SimpleBoard Favicon 32x32 - Kanban Board App Icon`
+- **Thin community `Community 25`** (1 nodes): `SimpleBoard Favicon 32x32 - Kanban Board App Icon`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (1 nodes): `Nullboard Favicon (16×16)`
+- **Thin community `Community 26`** (1 nodes): `Nullboard Favicon (16×16)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (1 nodes): `SimpleBoard App Icon (16x16 Favicon)`
+- **Thin community `Community 27`** (1 nodes): `SimpleBoard App Icon (16x16 Favicon)`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `GET()` connect `Community 1` to `Community 0`?**
-  _High betweenness centrality (0.068) - this node is a cross-community bridge._
+  _High betweenness centrality (0.066) - this node is a cross-community bridge._
 - **Why does `se()` connect `Community 0` to `Community 1`?**
-  _High betweenness centrality (0.025) - this node is a cross-community bridge._
+  _High betweenness centrality (0.024) - this node is a cross-community bridge._
 - **Why does `le()` connect `Community 0` to `Community 1`?**
   _High betweenness centrality (0.020) - this node is a cross-community bridge._
 - **Are the 7 inferred relationships involving `POST()` (e.g. with `isMongoAvailable()` and `getPreferencesCollection()`) actually correct?**
