@@ -1,11 +1,11 @@
 # Graph Report - simple-board  (2026-05-05)
 
 ## Corpus Check
-- 23 files · ~59,243 words
+- 23 files · ~59,250 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 200 nodes · 295 edges · 17 communities detected
+- 201 nodes · 297 edges · 17 communities detected
 - Extraction: 87% EXTRACTED · 13% INFERRED · 0% AMBIGUOUS · INFERRED: 39 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -89,7 +89,7 @@ Nodes (14): Add List Button (Disabled at 4 Lists), BoardView Kanban Board Layout
 
 ### Community 7 - "Community 7"
 Cohesion: 0.25
-Nodes (3): useBoardContext(), ListColumn(), useSync()
+Nodes (5): boardsReducer(), isCompletedList(), useBoardContext(), ListColumn(), useSync()
 
 ### Community 8 - "Community 8"
 Cohesion: 0.33
@@ -151,7 +151,7 @@ Nodes (1): SimpleBoard App Icon (16x16 Favicon)
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `GET()` connect `Community 1` to `Community 0`?**
-  _High betweenness centrality (0.069) - this node is a cross-community bridge._
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
 - **Why does `se()` connect `Community 0` to `Community 1`?**
   _High betweenness centrality (0.025) - this node is a cross-community bridge._
 - **Why does `le()` connect `Community 0` to `Community 1`?**
