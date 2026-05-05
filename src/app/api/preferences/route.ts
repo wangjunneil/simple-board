@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPreferencesCollection } from "@/lib/mongodb";
+import { getPreferencesCollection, isMongoAvailable } from "@/lib/mongodb";
 
 export async function POST(request: NextRequest) {
+  if (!isMongoAvailable()) {
+    return NextResponse.json({ ok: true });
+  }
   try {
     const { deviceId, theme, font } = await request.json();
     if (!deviceId) {
       return NextResponse.json({ error: "Missing deviceId" }, { status: 400 });
     }
     const collection = await getPreferencesCollection();
+    if (!collection) {
+      return NextResponse.json({ ok: true });
+    }
     await collection.updateOne(
       { deviceId },
       {
@@ -27,16 +33,22 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  if (!isMongoAvailable()) {
+    return NextResponse.json(null);
+  }
   try {
     const deviceId = request.nextUrl.searchParams.get("deviceId");
     if (!deviceId) {
       return NextResponse.json({ error: "Missing deviceId" }, { status: 400 });
     }
     const collection = await getPreferencesCollection();
+    if (!collection) {
+      return NextResponse.json(null);
+    }
     const doc = await collection.findOne({ deviceId });
     return NextResponse.json(doc || null);
   } catch (e) {
     console.error("GET /api/preferences error:", e);
-    return NextResponse.json({ error: "Fetch failed" }, { status: 500 });
+    return NextResponse.json(null);
   }
 }

@@ -1,36 +1,40 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, Collection } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
-if (!uri) throw new Error("MONGODB_URI environment variable is not set");
+let clientPromise: Promise<MongoClient> | null = null;
 
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
+function getUri(): string | undefined {
+  return process.env.MONGODB_URI;
+}
 
-if (process.env.NODE_ENV === "development") {
-  const globalWithMongo = globalThis as typeof globalThis & {
-    _mongoClientPromise?: Promise<MongoClient>;
-  };
-  if (!globalWithMongo._mongoClientPromise) {
-    client = new MongoClient(uri);
-    globalWithMongo._mongoClientPromise = client.connect();
+async function getClient(): Promise<MongoClient | null> {
+  const uri = getUri();
+  if (!uri) return null;
+
+  if (!clientPromise) {
+    const client = new MongoClient(uri);
+    clientPromise = client.connect();
   }
-  clientPromise = globalWithMongo._mongoClientPromise;
-} else {
-  client = new MongoClient(uri);
-  clientPromise = client.connect();
+  return clientPromise;
 }
 
 export async function getDb() {
-  const client = await clientPromise;
+  const client = await getClient();
+  if (!client) return null;
   return client.db("potato");
 }
 
-export async function getBoardsCollection() {
+export async function getBoardsCollection(): Promise<Collection | null> {
   const db = await getDb();
+  if (!db) return null;
   return db.collection("sb_boards");
 }
 
-export async function getPreferencesCollection() {
+export async function getPreferencesCollection(): Promise<Collection | null> {
   const db = await getDb();
+  if (!db) return null;
   return db.collection("sb_preferences");
+}
+
+export function isMongoAvailable(): boolean {
+  return !!getUri();
 }
