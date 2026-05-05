@@ -474,9 +474,14 @@ body.dragging {
 }
 
 .board .note .text {
-	white-space: pre-wrap;
-	overflow-wrap: anywhere;
-	min-height: calc( var(--lh) * 1px );
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-height: calc( var(--lh) * 1px );
+  color: #888;
+}
+
+.board .note .text::first-line {
+  color: #222;
 }
 
 /***/
@@ -1417,8 +1422,16 @@ body.dragging {
 }
 
 .theme-dark .board .note.raw .text {
-	color: #eee;
-	text-shadow: 0 0 4px #0008;
+  color: #eee;
+  text-shadow: 0 0 4px #0008;
+}
+
+.theme-dark .board .note .text {
+  color: #666;
+}
+
+.theme-dark .board .note .text::first-line {
+  color: #d6d6d6;
 }
 
 .theme-dark .board .note .ops .teaser {
