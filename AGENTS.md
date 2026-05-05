@@ -121,3 +121,13 @@ simple-board/
 - **Cloudflare Pages**: 需注意 MongoDB 驱动使用 `await import("mongodb")` 动态导入，API 路由导出 `handler` 兼容 OpenNext
 - `public/extras/` 为真实目录（含字体），非符号链接
 - `.env.example` 为环境变量模板，可安全提交 Git
+
+## graphify
+
+This project has a graphify knowledge graph at graphify-out/.
+
+Rules:
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
+- For cross-module "how does X relate to Y" questions, prefer `graphify query "<question>"`, `graphify path "<A>" "<B>"`, or `graphify explain "<concept>"` over grep — these traverse the graph's EXTRACTED + INFERRED edges instead of scanning files
+- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
