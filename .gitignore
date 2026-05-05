@@ -48,8 +48,5 @@ next-env.d.ts
 # opencode
 .opencode/
 
-# images (legacy assets)
-images/
-
 # logs
 *.log
