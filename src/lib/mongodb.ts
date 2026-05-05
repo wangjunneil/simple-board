@@ -1,40 +1,35 @@
-import { MongoClient, Collection } from "mongodb";
+let clientPromise: Promise<unknown> | null = null;
 
-let clientPromise: Promise<MongoClient> | null = null;
-
-function getUri(): string | undefined {
-  return process.env.MONGODB_URI;
+export function isMongoAvailable(): boolean {
+  return !!process.env.MONGODB_URI;
 }
 
-async function getClient(): Promise<MongoClient | null> {
-  const uri = getUri();
+async function getClient() {
+  const uri = process.env.MONGODB_URI;
   if (!uri) return null;
 
   if (!clientPromise) {
+    const { MongoClient } = await import("mongodb");
     const client = new MongoClient(uri);
     clientPromise = client.connect();
   }
   return clientPromise;
 }
 
-export async function getDb() {
+async function getDb() {
   const client = await getClient();
   if (!client) return null;
-  return client.db("potato");
+  return (client as any).db("potato");
 }
 
-export async function getBoardsCollection(): Promise<Collection | null> {
+export async function getBoardsCollection() {
   const db = await getDb();
   if (!db) return null;
   return db.collection("sb_boards");
 }
 
-export async function getPreferencesCollection(): Promise<Collection | null> {
+export async function getPreferencesCollection() {
   const db = await getDb();
   if (!db) return null;
   return db.collection("sb_preferences");
-}
-
-export function isMongoAvailable(): boolean {
-  return !!getUri();
 }

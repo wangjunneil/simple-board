@@ -58,3 +58,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(null);
   }
 }
+
+export const handler = async (request: Request) => {
+  if (request.method === "GET") return GET(request as unknown as NextRequest);
+  if (request.method === "POST") return POST(request as unknown as NextRequest);
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
+};
