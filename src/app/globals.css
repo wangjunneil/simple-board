@@ -671,13 +671,15 @@ body.dragging {
 	background: #f8f9fb;
 }
 
-.crowded .logo:hover {
-	background: #fff;
-	box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+.crowded .logo:hover,
+.crowded .logo:focus-within {
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
-.logo:hover {
-	opacity: 1.0;
+.logo:hover,
+.logo:focus-within {
+  opacity: 1.0;
 }
 
 .logo .alert {
@@ -695,10 +697,11 @@ body.dragging {
 	padding-top: 1px;
 }
 
-.logo:hover .bulk {
-	height: auto;
-	opacity: 1;
-	overflow: visible;
+.logo:hover .bulk,
+.logo:focus-within .bulk {
+  height: auto;
+  opacity: 1;
+  overflow: visible;
 }
 
 .logo a.site,
@@ -2067,4 +2070,184 @@ body.dragging {
 
 .theme-dark .login-card input:focus {
   border-color: #5a9fd4;
+}
+
+/* ==============================================
+   Mobile Responsive — max-width: 767px
+   ============================================== */
+@media (max-width: 767px) {
+
+  /* ---- Kanban Board — vertical stack ---- */
+  .board {
+    min-width: auto;
+    margin: 36px auto 0;
+    padding: 12px 8px;
+  }
+
+  .board .lists {
+    white-space: normal;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .board .list {
+    display: block;
+    width: 100% !important;
+    max-width: 100%;
+    margin: 0 0 8px;
+  }
+
+  .board .list:first-child,
+  .board .list:last-child {
+    margin: 0 0 8px;
+  }
+
+  .board .lists-scroller {
+    display: none;
+  }
+
+  /* ---- Board head (title row) ---- */
+  .board > .head {
+    margin: 0 0 8px;
+    padding: 8px 10px;
+  }
+
+  .board > .head .menu {
+    margin-right: 0;
+  }
+
+  .board .head .text {
+    white-space: normal;
+    word-break: break-word;
+    overflow: visible;
+  }
+
+  /* ---- Logo (compact) ---- */
+  .logo {
+    top: 4px;
+    left: 4px;
+    padding: 4px 8px;
+  }
+
+  /* ---- TopBar (compact) ---- */
+  .top-bar {
+    top: 4px;
+    right: 4px;
+    gap: 0;
+  }
+
+  .top-bar-btn {
+    padding: 2px 4px;
+  }
+
+  /* ---- Footer ---- */
+  body {
+    padding-bottom: 44px;
+  }
+
+  .footer {
+    font-size: calc(9rem / 11);
+    padding: 6px 0;
+  }
+
+  /* ---- Login ---- */
+  .login-card {
+    width: calc(100% - 40px);
+    max-width: 320px;
+    padding: 32px 24px;
+  }
+
+  /* ---- Board List ---- */
+  .board-list-page {
+    margin-top: 12px;
+    padding: 12px;
+  }
+
+  .board-list-header h2 {
+    font-size: 18px;
+  }
+
+  .board-cards {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .board-add-form {
+    flex-wrap: wrap;
+  }
+
+  .board-add-input {
+    min-width: 0;
+  }
+
+  .board-add-actions {
+    white-space: nowrap;
+  }
+
+  /* ---- Board Card ---- */
+  .board-card {
+    padding: 14px 14px 24px;
+  }
+
+  .board-card-title {
+    font-size: 13px;
+  }
+
+  .board-card-created {
+    font-size: 9px;
+  }
+
+  /* ---- Overlays ---- */
+  .overlay > div {
+    margin-top: 20px;
+    max-width: calc(100% - 32px);
+  }
+
+  .overlay .backup-conf {
+    min-width: auto;
+    padding: 16px 24px;
+  }
+
+  .overlay .backup-conf .etc input {
+    width: 100%;
+  }
+
+  .overlay > div.license {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  .help-overlay > div {
+    padding: 24px 20px;
+    margin-top: 20px;
+    max-height: calc(100vh - 40px);
+  }
+
+  /* ---- Loading & Error screens ---- */
+  .loading-screen,
+  .error-boundary {
+    width: 100%;
+  }
+
+  /* ---- Note ops: larger tap target ---- */
+  .board .note .ops .teaser {
+    padding: 8px;
+    font-size: calc(14rem / 11);
+  }
+
+  .board .note .ops .bulk button {
+    position: relative;
+  }
+
+  .board .note .ops .bulk button::after {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+  }
 }

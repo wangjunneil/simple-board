@@ -151,7 +151,7 @@ function Logo({ syncStatus, onShowHelp }: { syncStatus: SyncStatus; onShowHelp: 
   };
 
   return (
-    <div className="logo">
+    <div className="logo" tabIndex={0}>
       <a href="#" onClick={(e) => e.preventDefault()}>
         SimpleBoard
         <span className={dotClass} title={
