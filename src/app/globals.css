@@ -1774,14 +1774,16 @@ body.dragging {
 }
 
 /***/
-.theme-toggle {
+.top-bar {
 	position: absolute;
 	top: 10px;
 	right: 21px;
 	z-index: 3;
+	display: flex;
+	gap: 2px;
 }
 
-.theme-toggle button {
+.top-bar-btn {
 	background: none;
 	border: none;
 	font-size: calc(18rem / 11);
@@ -1790,17 +1792,24 @@ body.dragging {
 	padding: 4px 6px;
 	color: #999;
 	transition: color 200ms;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
-.theme-toggle button:hover {
+.top-bar-btn:hover {
 	color: #333;
 }
 
-.theme-dark .theme-toggle button {
+.top-bar-btn svg {
+	display: block;
+}
+
+.theme-dark .top-bar-btn {
 	color: #777;
 }
 
-.theme-dark .theme-toggle button:hover {
+.theme-dark .top-bar-btn:hover {
 	color: #fc2;
 }
 

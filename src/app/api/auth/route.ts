@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { signToken, getCookieValue, getPasswords } from "@/lib/auth";
+import { signToken, getCookieValue, getClearCookieValue, getPasswords } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   const passwords = getPasswords();
@@ -26,4 +26,14 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Bad request" }, { status: 400 });
   }
+}
+
+export async function DELETE() {
+  return NextResponse.json(
+    { ok: true },
+    {
+      status: 200,
+      headers: { "Set-Cookie": getClearCookieValue() },
+    }
+  );
 }

@@ -71,3 +71,7 @@ export function getCookieName(): string {
 export function getCookieValue(token: string): string {
   return `${COOKIE_NAME}=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${SESSION_MINUTES * 60}`;
 }
+
+export function getClearCookieValue(): string {
+  return `${COOKIE_NAME}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0`;
+}
