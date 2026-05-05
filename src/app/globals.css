@@ -2012,8 +2012,8 @@ body.dragging {
   display: block;
   width: 100%;
   padding: 10px 0;
-  background: #4a90d9;
-  color: #fff;
+  background: #d0d4d8;
+  color: #333;
   border: none;
   border-radius: 2px;
   font-size: calc(13rem / 11);
@@ -2023,7 +2023,7 @@ body.dragging {
 }
 
 .login-card button:hover {
-  background: #3a7bc8;
+  background: #bcc0c4;
 }
 
 .login-card button:disabled {

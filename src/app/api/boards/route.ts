@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBoardsCollection, isMongoAvailable } from "@/lib/mongodb";
-import { getServerDeviceId } from "@/lib/auth";
+import { verifyTokenAny, getServerDeviceId, getCookieName } from "@/lib/auth";
+
+async function resolveDeviceId(request: NextRequest): Promise<string | null> {
+  const token = request.cookies.get(getCookieName())?.value;
+  if (!token) return null;
+  const matched = await verifyTokenAny(token);
+  if (!matched) return null;
+  return getServerDeviceId(matched);
+}
 
 export async function POST(request: NextRequest) {
   if (!isMongoAvailable()) {
@@ -8,11 +16,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
   try {
+    const deviceId = await resolveDeviceId(request);
+    if (!deviceId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const { boards, activeBoardId, theme, font } = await request.json();
     if (!Array.isArray(boards)) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
-    const deviceId = await getServerDeviceId();
     const collection = await getBoardsCollection();
     if (!collection) {
       console.error("POST /api/boards: failed to get boards collection");
@@ -44,7 +55,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(null);
   }
   try {
-    const deviceId = await getServerDeviceId();
+    const deviceId = await resolveDeviceId(request);
+    if (!deviceId) {
+      return NextResponse.json(null);
+    }
     const collection = await getBoardsCollection();
     if (!collection) {
       console.error("GET /api/boards: failed to get boards collection");

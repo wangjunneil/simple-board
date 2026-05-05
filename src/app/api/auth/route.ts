@@ -1,20 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { signToken, getCookieValue } from "@/lib/auth";
+import { signToken, getCookieValue, getPasswords } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
-  const password = process.env.ACCESS_PASSWORD;
-  if (!password) {
+  const passwords = getPasswords();
+  if (passwords.length === 0) {
     return NextResponse.json({ error: "Auth not configured" }, { status: 500 });
   }
 
   try {
     const { password: inputPassword } = await request.json();
 
-    if (inputPassword !== password) {
+    const matched = passwords.find(p => p === inputPassword);
+    if (!matched) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
 
-    const token = await signToken(password);
+    const token = await signToken(matched);
     return NextResponse.json(
       { ok: true },
       {

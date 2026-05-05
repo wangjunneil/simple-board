@@ -1,16 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken, getCookieName, getCookieValue } from "@/lib/auth";
+import { verifyTokenAny, getCookieName, getCookieValue } from "@/lib/auth";
 
 export async function middleware(request: NextRequest) {
-  const password = process.env.ACCESS_PASSWORD;
-  if (!password) {
-    return NextResponse.next();
-  }
-
-  if (request.nextUrl.pathname === "/login") {
-    return NextResponse.next();
-  }
-
   const cookieName = getCookieName();
   const token = request.cookies.get(cookieName)?.value;
 
@@ -18,8 +9,8 @@ export async function middleware(request: NextRequest) {
     return redirectToLogin(request);
   }
 
-  const valid = await verifyToken(token, password);
-  if (!valid) {
+  const matched = await verifyTokenAny(token);
+  if (!matched) {
     return redirectToLogin(request);
   }
 

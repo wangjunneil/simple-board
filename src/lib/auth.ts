@@ -9,10 +9,14 @@ async function getKey(password: string): Promise<CryptoKey> {
   return crypto.subtle.importKey("raw", keyData, { name: ALGORITHM, hash: HASH }, false, ["sign", "verify"]);
 }
 
-export async function getServerDeviceId(): Promise<string> {
-  const pw = process.env.ACCESS_PASSWORD || "simpleboard";
+export function getPasswords(): string[] {
+  const raw = process.env.ACCESS_PASSWORD || "";
+  return raw.split(",").map(p => p.trim()).filter(Boolean);
+}
+
+export async function getServerDeviceId(password: string): Promise<string> {
   const enc = new TextEncoder();
-  const hash = await crypto.subtle.digest("SHA-256", enc.encode(pw));
+  const hash = await crypto.subtle.digest("SHA-256", enc.encode(password));
   const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
   return "nb-" + hex.slice(0, 16);
 }
@@ -48,6 +52,16 @@ export async function verifyToken(token: string, password: string): Promise<bool
   } catch {
     return false;
   }
+}
+
+export async function verifyTokenAny(token: string): Promise<string | null> {
+  const passwords = getPasswords();
+  for (const pw of passwords) {
+    if (await verifyToken(token, pw)) {
+      return pw;
+    }
+  }
+  return null;
 }
 
 export function getCookieName(): string {
