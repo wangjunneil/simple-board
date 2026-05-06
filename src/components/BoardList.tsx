@@ -39,8 +39,9 @@ function SortableBoardItem({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const totalLists = board.lists.length;
   const totalNotes = board.lists.reduce((sum, l) => sum + l.notes.length, 0);
+  const list2Notes = board.lists[1]?.notes.length ?? null;
+  const list3Notes = board.lists[2]?.notes.length ?? null;
 
   const createdDate = (() => {
     const d = new Date(board.createdAt);
@@ -72,7 +73,13 @@ function SortableBoardItem({
         DEL
       </button>
       <div className="board-card-meta">
-        {totalLists} lists · {totalNotes} notes
+        {totalNotes} notes
+        {list2Notes != null && (
+          <>{" "}·{" "}<span className="board-card-metric-label">To Do</span>{" "}{list2Notes}</>
+        )}
+        {list3Notes != null && (
+          <>{" "}·{" "}<span className="board-card-metric-label">In Progress</span>{" "}{list3Notes}</>
+        )}
       </div>
       {createdDate && (
         <div className="board-card-created">{createdDate}</div>

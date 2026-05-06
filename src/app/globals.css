@@ -1684,6 +1684,11 @@ body.dragging {
 	color: #bbb;
 }
 
+.board-card-metric-label {
+	font-weight: 500;
+	color: #555;
+}
+
 .board-card-created {
 	position: absolute;
 	bottom: 6px;
@@ -1771,7 +1776,11 @@ body.dragging {
 }
 
 .theme-dark .board-card-meta {
-	color: #777;
+  color: #777;
+}
+
+.theme-dark .board-card-metric-label {
+  color: #999;
 }
 
 .theme-dark .board-card-created {
