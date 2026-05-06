@@ -62,8 +62,7 @@ function HelpOverlay({ onClose, onGoBoards }: { onClose: () => void; onGoBoards:
           <li><kbd>Enter</kbd> Confirm / Save</li>
           <li><kbd>Escape</kbd> Cancel editing / Close dialogs</li>
           <li><kbd>Tab</kbd> Create new note (when on the last note)</li>
-          <li><kbd>E</kbd> Expand all notes</li>
-          <li><kbd>C</kbd> Collapse all notes</li>
+          <li><kbd>E</kbd> Toggle expand/collapse all notes</li>
         </ul>
 
         <h3>Import / Export</h3>
@@ -259,6 +258,9 @@ function NullboardAppInner() {
   const syncStatus = useSync();
   const [showHelp, setShowHelp] = useState(false);
 
+  const stateRef = useRef(state);
+  stateRef.current = state;
+
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       const tag = (document.activeElement?.tagName || "").toLowerCase();
@@ -270,19 +272,24 @@ function NullboardAppInner() {
       } else if (e.key === "z" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
         undo();
-      } else if (!editing && state.activeBoardId) {
-        if (e.key === "e") {
-          e.preventDefault();
-          dispatch({ type: "EXPAND_ALL_NOTES", boardId: state.activeBoardId });
-        } else if (e.key === "c") {
-          e.preventDefault();
-          dispatch({ type: "COLLAPSE_ALL_NOTES", boardId: state.activeBoardId });
+      } else if (e.key === "e" && !editing && stateRef.current.activeBoardId) {
+        e.preventDefault();
+        const board = stateRef.current.boards.find(
+          (b) => b.id === stateRef.current.activeBoardId
+        );
+        const anyCollapsed = board?.lists.some((l) =>
+          l.notes.some((n) => n.collapsed)
+        );
+        if (anyCollapsed) {
+          dispatch({ type: "EXPAND_ALL_NOTES", boardId: stateRef.current.activeBoardId });
+        } else {
+          dispatch({ type: "COLLAPSE_ALL_NOTES", boardId: stateRef.current.activeBoardId });
         }
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [undo, redo, state.activeBoardId, dispatch]);
+  }, [undo, redo, dispatch]);
 
   const handleGoBoards = useCallback(() => {
     setShowHelp(false);
