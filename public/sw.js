@@ -1,6 +1,6 @@
-const CACHE_NAME = "simpleboard-v2";
+var CACHE_NAME = "simpleboard-v3";
 
-const STATIC_ASSETS = [
+var STATIC_ASSETS = [
   "/",
   "/login",
   "/site.webmanifest",
@@ -12,42 +12,43 @@ const STATIC_ASSETS = [
   "/android-chrome-512x512.png",
 ];
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", function (event) {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then(function (cache) {
+      return cache.addAll(STATIC_ASSETS);
+    })
   );
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener("activate", function (event) {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
-      )
-    )
+    caches.keys().then(function (keys) {
+      return Promise.all(
+        keys.filter(function (k) { return k !== CACHE_NAME; }).map(function (k) { return caches.delete(k); })
+      );
+    }).then(function () {
+      return self.clients.claim();
+    })
   );
 });
 
-self.addEventListener("message", (event) => {
-  if (event.data?.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
-});
+self.addEventListener("fetch", function (event) {
+  var url = new URL(event.request.url);
 
-self.addEventListener("fetch", (event) => {
-  const { pathname } = new URL(event.request.url);
-
-  if (pathname.startsWith("/api/")) {
+  if (url.pathname.startsWith("/api/")) {
     return;
   }
 
   if (
-    pathname.startsWith("/_next/static/") ||
-    pathname.startsWith("/extras/") ||
-    STATIC_ASSETS.includes(pathname)
+    url.pathname.startsWith("/_next/static/") ||
+    url.pathname.startsWith("/extras/") ||
+    STATIC_ASSETS.includes(url.pathname)
   ) {
     event.respondWith(
-      caches.match(event.request).then((cached) => cached || fetch(event.request))
+      caches.match(event.request).then(function (cached) {
+        return cached || fetch(event.request);
+      })
     );
   }
 });

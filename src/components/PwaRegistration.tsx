@@ -2,43 +2,43 @@
 
 import { useEffect, useState, useCallback } from "react";
 
+let registration: ServiceWorkerRegistration | null = null;
+
 export function PwaRegistration() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const handleUpdate = useCallback(() => {
-    if (!("serviceWorker" in navigator)) return;
-    navigator.serviceWorker.ready.then((reg) => {
-      if (reg.waiting) {
-        reg.waiting.postMessage({ type: "SKIP_WAITING" });
-      }
-    });
+    window.location.reload();
   }, []);
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
 
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (refreshing) return;
-      refreshing = true;
-      window.location.reload();
-    });
+    function register() {
+      navigator.serviceWorker.register("/sw.js").then(function (reg) {
+        registration = reg;
 
-    navigator.serviceWorker.register("/sw.js").then((reg) => {
-      reg.addEventListener("updatefound", () => {
-        const newWorker = reg.installing;
-        if (!newWorker) return;
-        newWorker.addEventListener("statechange", () => {
-          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-            setUpdateAvailable(true);
-          }
-        });
+        reg.onupdatefound = function () {
+          var installing = reg.installing;
+          if (!installing) return;
+
+          installing.onstatechange = function () {
+            if (installing!.state === "installed" && navigator.serviceWorker.controller) {
+              setUpdateAvailable(true);
+            }
+          };
+        };
+
+        if (reg.waiting && navigator.serviceWorker.controller) {
+          setUpdateAvailable(true);
+        }
       });
+    }
 
-      if (reg.waiting && navigator.serviceWorker.controller) {
-        setUpdateAvailable(true);
-      }
-    });
+    window.addEventListener("load", register);
+    return function () {
+      window.removeEventListener("load", register);
+    };
   }, []);
 
   if (!updateAvailable) return null;
