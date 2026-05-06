@@ -1,11 +1,11 @@
 # Graph Report - simple-board  (2026-05-06)
 
 ## Corpus Check
-- 25 files · ~59,743 words
+- 25 files · ~59,742 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 203 nodes · 297 edges · 17 communities detected
+- 204 nodes · 298 edges · 17 communities detected
 - Extraction: 87% EXTRACTED · 13% INFERRED · 0% AMBIGUOUS · INFERRED: 39 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -151,7 +151,7 @@ Nodes (1): SimpleBoard App Icon (16x16 Favicon)
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `GET()` connect `Community 1` to `Community 0`?**
-  _High betweenness centrality (0.067) - this node is a cross-community bridge._
+  _High betweenness centrality (0.066) - this node is a cross-community bridge._
 - **Why does `se()` connect `Community 0` to `Community 1`?**
   _High betweenness centrality (0.024) - this node is a cross-community bridge._
 - **Why does `le()` connect `Community 0` to `Community 1`?**

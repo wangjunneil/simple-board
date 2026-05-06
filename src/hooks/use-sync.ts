@@ -11,6 +11,7 @@ export function useSync() {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle");
   const deviceIdRef = useRef<string>("");
   const stateRef = useRef(state);
+  const redirectedRef = useRef(false);
 
   useEffect(() => {
     stateRef.current = state;
@@ -35,6 +36,11 @@ export function useSync() {
       if (res.ok) {
         setSyncStatus("synced");
       } else {
+        if (res.status === 401 && !redirectedRef.current) {
+          redirectedRef.current = true;
+          window.location.href = "/login";
+          return;
+        }
         setSyncStatus("error");
       }
     } catch {
@@ -54,6 +60,18 @@ export function useSync() {
           fetch(`/api/preferences?deviceId=${did}`),
           fetch(`/api/boards?deviceId=${did}`),
         ]);
+
+        if (!isCancelled && prefsRes.status === 401 && !redirectedRef.current) {
+          redirectedRef.current = true;
+          window.location.href = "/login";
+          return;
+        }
+
+        if (!isCancelled && boardsRes.status === 401 && !redirectedRef.current) {
+          redirectedRef.current = true;
+          window.location.href = "/login";
+          return;
+        }
 
         if (!isCancelled && prefsRes.ok) {
           const prefDoc = await prefsRes.json();
