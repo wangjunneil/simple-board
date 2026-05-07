@@ -1,25 +1,112 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import type { Note } from "@/types";
 import { useBoardContext } from "@/hooks/use-board";
 import { isCompletedList } from "@/lib/board-store";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-function renderTextWithLinks(text: string) {
-  const urlRegex = /(https?:\/\/[^\s<]+)/g;
-  const parts = text.split(urlRegex);
-  return parts.map((part, i) => {
-    if (urlRegex.test(part)) {
-      return (
-        <a key={i} href={part} target="_blank" rel="noopener noreferrer">
-          {part}
-        </a>
+function renderInline(
+  text: string,
+  baseKey: number
+): { nodes: React.ReactNode[]; nextKey: number } {
+  const nodes: React.ReactNode[] = [];
+  let pos = 0;
+  let key = baseKey;
+
+  while (pos < text.length) {
+    const remaining = text.slice(pos);
+    const urlIdx = remaining.search(/https?:\/\/[^\s<]+/);
+    const boldIdx = remaining.search(/\*\*(.+?)\*\*/);
+    const strikeIdx = remaining.search(/~~(.+?)~~/);
+
+    const candidates: { idx: number; type: string }[] = [];
+    if (urlIdx >= 0) candidates.push({ idx: urlIdx, type: "url" });
+    if (boldIdx >= 0) candidates.push({ idx: boldIdx, type: "bold" });
+    if (strikeIdx >= 0) candidates.push({ idx: strikeIdx, type: "strike" });
+    candidates.sort((a, b) => a.idx - b.idx);
+
+    if (candidates.length === 0) {
+      nodes.push(<React.Fragment key={key++}>{text.slice(pos)}</React.Fragment>);
+      break;
+    }
+
+    const first = candidates[0];
+
+    if (first.idx > 0) {
+      nodes.push(
+        <React.Fragment key={key++}>
+          {text.slice(pos, pos + first.idx)}
+        </React.Fragment>
       );
     }
-    return part;
-  });
+
+    if (first.type === "url") {
+      const m = /https?:\/\/[^\s<]+/.exec(remaining)!;
+      const url = m[0];
+      nodes.push(
+        <a key={key++} href={url} target="_blank" rel="noopener noreferrer">
+          {url}
+        </a>
+      );
+      pos += first.idx + url.length;
+    } else if (first.type === "bold") {
+      const m = /\*\*(.+?)\*\*/.exec(remaining)!;
+      const inner = renderInline(m[1], key);
+      key = inner.nextKey;
+      nodes.push(<strong key={key++}>{inner.nodes}</strong>);
+      pos += first.idx + m[0].length;
+    } else {
+      const m = /~~(.+?)~~/.exec(remaining)!;
+      const inner = renderInline(m[1], key);
+      key = inner.nextKey;
+      nodes.push(<del key={key++}>{inner.nodes}</del>);
+      pos += first.idx + m[0].length;
+    }
+  }
+
+  return { nodes, nextKey: key };
+}
+
+function renderNoteText(text: string): React.ReactNode {
+  const lines = text.split("\n");
+  const nodes: React.ReactNode[] = [];
+  let i = 0;
+  let key = 0;
+
+  while (i < lines.length) {
+    if (/^-\s/.test(lines[i])) {
+      const items: React.ReactNode[] = [];
+      while (i < lines.length && /^-\s/.test(lines[i])) {
+        const content = lines[i].replace(/^-\s/, "");
+        const rendered = renderInline(content, key);
+        key = rendered.nextKey;
+        items.push(<li key={key++}>{rendered.nodes}</li>);
+        i++;
+      }
+      nodes.push(
+        <ul key={key++} style={{ paddingLeft: "1.2em", margin: "0.2em 0" }}>
+          {items}
+        </ul>
+      );
+    } else {
+      const textLines: string[] = [];
+      while (i < lines.length && !/^-\s/.test(lines[i])) {
+        textLines.push(lines[i]);
+        i++;
+      }
+      const rendered = renderInline(textLines.join("\n"), key);
+      key = rendered.nextKey;
+      nodes.push(
+        <span key={key++} style={{ whiteSpace: "pre-wrap" }}>
+          {rendered.nodes}
+        </span>
+      );
+    }
+  }
+
+  return <>{nodes}</>;
 }
 
 export default function NoteCard({
@@ -50,6 +137,7 @@ export default function NoteCard({
   } = useSortable({
     id: note.id,
     data: { type: "note", boardId, listId, note },
+    disabled: editing,
   });
 
   const style: React.CSSProperties = {
@@ -67,6 +155,14 @@ export default function NoteCard({
       );
     }
   }, [editing]);
+
+  useEffect(() => {
+    if (editing && textareaRef.current) {
+      const ta = textareaRef.current;
+      ta.style.height = "auto";
+      ta.style.height = ta.scrollHeight + "px";
+    }
+  }, [editText, editing]);
 
   const handleDoubleClick = useCallback(() => {
     setEditText(note.text);
@@ -159,7 +255,7 @@ export default function NoteCard({
   return (
     <div ref={setNodeRef} className={classNames} {...attributes} {...listeners} style={noteStyle}>
       <div className="text" onDoubleClick={handleDoubleClick}>
-        {note.text ? renderTextWithLinks(note.text) : <span style={{ color: "#999", fontStyle: "italic" }}>Empty note</span>}
+        {note.text ? renderNoteText(note.text) : <span style={{ color: "#999", fontStyle: "italic" }}>Empty note</span>}
       </div>
       {completedDateStr && (
         <div className="note-completed-date">{completedDateStr}</div>
@@ -172,7 +268,6 @@ export default function NoteCard({
           onChange={(e) => setEditText(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          rows={3}
         />
       )}
       <div className="ops">
