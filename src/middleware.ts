@@ -30,6 +30,6 @@ function redirectToLogin(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next|login|api/auth|site\\.webmanifest|\\.png$|\\.ico$|\\.woff$).*)",
+    "/((?!_next|login|api/auth|\\.png$|\\.ico$|\\.woff$).*)",
   ],
 };

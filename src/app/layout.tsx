@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { PwaRegistration } from "@/components/PwaRegistration";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,21 +11,10 @@ export const metadata: Metadata = {
       { url: "/favicon.ico", sizes: "48x48" },
     ],
     apple: [{ url: "/apple-touch-icon.png" }],
-    other: [
-      { url: "/android-chrome-192x192.png", sizes: "192x192" },
-      { url: "/android-chrome-512x512.png", sizes: "512x512" },
-    ],
-  },
-  manifest: "/site.webmanifest",
-  appleWebApp: {
-    capable: true,
-    title: "SimpleBoard",
-    statusBarStyle: "default",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
 };
@@ -38,10 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        {children}
-        <PwaRegistration />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
