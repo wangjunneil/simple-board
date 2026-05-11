@@ -1,7 +1,7 @@
 const ALGORITHM = "HMAC";
 const HASH = "SHA-256";
 const COOKIE_NAME = "sb-auth";
-const SESSION_MINUTES = 30;
+const SESSION_MINUTES = 60;
 
 async function getKey(password: string): Promise<CryptoKey> {
   const enc = new TextEncoder();
