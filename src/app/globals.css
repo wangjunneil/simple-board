@@ -2071,6 +2071,12 @@ body.dragging {
   margin-bottom: 12px;
 }
 
+.login-hint {
+  color: #b86e00;
+  font-size: calc(11rem / 11);
+  margin-bottom: 12px;
+}
+
 .theme-dark .login-page {
   background: #09090A;
 }

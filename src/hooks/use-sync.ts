@@ -38,7 +38,7 @@ export function useSync() {
       } else {
         if (res.status === 401 && !redirectedRef.current) {
           redirectedRef.current = true;
-          window.location.href = "/login";
+          window.location.href = "/login?reason=session_expired";
           return;
         }
         setSyncStatus("error");
@@ -63,13 +63,13 @@ export function useSync() {
 
         if (!isCancelled && prefsRes.status === 401 && !redirectedRef.current) {
           redirectedRef.current = true;
-          window.location.href = "/login";
+          window.location.href = "/login?reason=session_expired";
           return;
         }
 
         if (!isCancelled && boardsRes.status === 401 && !redirectedRef.current) {
           redirectedRef.current = true;
-          window.location.href = "/login";
+          window.location.href = "/login?reason=session_expired";
           return;
         }
 

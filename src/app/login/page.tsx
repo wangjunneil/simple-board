@@ -5,6 +5,13 @@ import { useRouter } from "next/navigation";
 import { saveDeviceId } from "@/lib/storage";
 
 export default function LoginPage() {
+  const [hint] = useState(() => {
+    if (typeof window !== "undefined") {
+      const reason = new URLSearchParams(window.location.search).get("reason");
+      if (reason === "session_expired") return "Session expired. Please sign in again.";
+    }
+    return "";
+  });
   const [password, setPassword] = useState(() => {
     if (typeof window !== "undefined" && window.location.hostname === "simple-board-snowy.vercel.app") {
       return "admin123";
@@ -51,6 +58,7 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <h1>SimpleBoard</h1>
+        {hint && <div className="login-hint">{hint}</div>}
         <form onSubmit={handleSubmit}>
           <input
             type="password"
