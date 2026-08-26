@@ -316,6 +316,35 @@ body.dragging {
 	position: relative;
 }
 
+/***/
+/* Title hierarchy: the board title is the page's primary heading, so it
+   is larger and darker than the list titles below it. */
+.board > .head .text {
+	font-size: calc( (var(--fs-head) + 2) / 11 * 1rem );
+	color: #222;
+}
+
+.board > .head .edit {
+	font-size: calc( (var(--fs-head) + 2) / 11 * 1rem );
+}
+
+.board .list .head .text {
+	font-weight: 400;
+	color: #555;
+}
+
+.board .list .head .edit {
+	font-weight: 400;
+}
+
+.theme-dark .board > .head .text {
+	color: #fff;
+}
+
+.theme-dark .board .list .head .text {
+	color: #aaa;
+}
+
 .board-back-link {
 	display: inline-block;
 	margin-bottom: 8px;
@@ -561,7 +590,7 @@ body.dragging {
 
 .board .note .ops .teaser {
 	display: block;
-	margin-top: 2px;
+	margin-top: 5px;
 	margin-right: 1px;
 	padding-right: 3px;
 }
@@ -583,6 +612,12 @@ body.dragging {
 
 .board .note .ops .bulk a {
 	padding-right: 4px;
+}
+
+/* "Color" group label: desktop keeps the original compact inline row,
+   so the label only appears in the mobile touch menu. */
+.board .note .ops .bulk .ops-colors-label {
+	display: none;
 }
 
 .board .note .ops:hover .bulk {
@@ -629,7 +664,8 @@ body.dragging {
 
 .board .note.collapsed .ops .teaser:before {
 	content: '_';
-	top: 1px;
+	position: relative;
+	top: -1px;
 }
 
 .board .note.collapsed:hover .ops .teaser:before {
@@ -637,13 +673,22 @@ body.dragging {
 }
 
 /***/
+/* Completed-date sits in the bottom-LEFT corner: the ops teaser owns the
+   top-right corner, so the date can never collide with it at any note
+   height. Completed notes reserve a bottom slot (padding-bottom) so the
+   date also never touches the note text. */
 .note-completed-date {
 	position: absolute;
-	bottom: 2px;
-	right: 6px;
+	bottom: 4px;
+	left: 10px;
+	right: auto;
 	font-size: calc(8rem / 11);
 	color: #bbb;
 	pointer-events: none;
+}
+
+.board .note.completed {
+	padding-bottom: 24px;
 }
 
 /***/
@@ -1923,6 +1968,7 @@ body.dragging {
   overflow-y: auto;
   font-size: calc(12rem / 11);
   line-height: 1.6;
+  box-sizing: border-box;
 }
 
 .help-overlay h2 {
@@ -2012,6 +2058,7 @@ body.dragging {
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   width: 320px;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .login-card h1 {
@@ -2105,32 +2152,51 @@ body.dragging {
    ============================================== */
 @media (max-width: 767px) {
 
-  /* ---- Kanban Board — vertical stack ---- */
+  /* ---- Touch behaviour: no double-tap-zoom delay on interactive areas ----
+     Keeps panning/pinch working but makes double-tap-to-edit reliable. */
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  .board .note,
+  .board .list,
+  .board .head,
+  .board-card {
+    touch-action: manipulation;
+  }
+
+  /* ---- Kanban Board — vertical stack on mobile ----
+     All lists flow full-width top-to-bottom with normal vertical page
+     scroll. No horizontal swipe/snap on mobile; the desktop
+     horizontal-row layout (above this media query) is untouched. */
   .board {
     min-width: auto;
-    margin: 36px auto 0;
+    width: auto;
+    max-width: 100%;
+    margin: calc(36px + env(safe-area-inset-top)) auto 0;
     padding: 12px 8px;
   }
 
   .board .lists {
     white-space: normal;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
 
   .board .list {
-    display: block;
-    width: 100% !important;
-    max-width: 100%;
-    margin: 0 0 8px;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+    overflow: visible;
   }
 
   .board .list:first-child,
   .board .list:last-child {
-    margin: 0 0 8px;
+    margin: 0;
   }
 
   .board .lists-scroller {
@@ -2143,45 +2209,277 @@ body.dragging {
     padding: 8px 10px;
   }
 
-  .board > .head .menu {
-    margin-right: 0;
-  }
-
   .board .head .text {
     white-space: normal;
     word-break: break-word;
     overflow: visible;
   }
 
-  /* ---- Logo (compact) ---- */
-  .logo {
-    top: 4px;
-    left: 4px;
-    padding: 4px 8px;
+  .board > .head .text {
+    padding-right: 44px;
   }
 
-  /* ---- TopBar (compact) ---- */
+  .board .list .head .text {
+    padding-right: 40px;
+  }
+
+  /* ---- Menu teasers: restore the original "\2261" glyph on mobile ----
+     The React port dropped the teaser glyphs from nullboard.html, so on
+     touch there was no visible affordance for the board/list menus. */
+  .board .head .menu .teaser {
+    display: block;
+    font-size: calc(16rem / 11);
+    line-height: 1;
+    color: #000000A0;
+    padding: 5px 8px;
+  }
+
+  .board .head .menu .teaser::before {
+    content: '\2261';
+  }
+
+  .theme-dark .board .head .menu .teaser {
+    color: #ccc;
+  }
+
+  /* ---- Board head + list head dropdown menus (touch) ----
+     Clean, stacked, well-spaced items with >=44px tap targets.
+     Shared by the board head ("Add list") and the list head
+     ("Add note", "Move left", "Move right", "Delete list"). */
+  .board .head .menu .bulk {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    z-index: 6;
+    min-width: 184px;
+    flex-direction: column;
+    gap: 2px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    padding: 6px;
+  }
+
+  .board .head .menu:hover .bulk {
+    display: flex;
+    opacity: 1;
+  }
+
+  .board .head .menu .bulk a,
+  .board .head .menu .bulk .add-list-disabled {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 12px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .board .head .menu .bulk a:active {
+    background: #eee;
+  }
+
+  .theme-dark .board .head .menu .bulk {
+    background: #202022;
+    border-color: #333;
+  }
+
+  .theme-dark .board .head .menu .bulk a:active {
+    background: #333;
+  }
+
+  /* ---- Note cards ---- */
+  .board .note .text {
+    margin-right: 34px;
+  }
+
+  /* ---- Note ops: always visible + tap-friendly context menu ---- */
+  .board .note .ops {
+    opacity: 1;
+    z-index: 5;
+  }
+
+  /* ---- Note ops teaser: aligned with the first text line ----
+     The note text's first line box runs 5px..18.75px from the note top.
+     Keeping a >=36px tap box (1px top pad + 23px glyph + 12px bottom)
+     while line-height: 1 centers the glyph so its optical center
+     (~12.6px) matches the text line center (~11.9px). */
+  .board .note .ops .teaser {
+    padding: 1px 10px 12px;
+    font-size: calc(16rem / 11);
+    line-height: 1;
+  }
+
+  .board .note.collapsed .ops .teaser {
+    padding: 1px 10px 12px;
+  }
+
+  /* Collapsed glyph sits on the collapsed line's baseline: the "_"
+     ink renders at the font baseline (~4px below the text baseline at
+     the current box), so a small relative nudge pulls it up to sit
+     with the text. Tap box is untouched (relative positioning only). */
+  .board .note.collapsed .ops .teaser:before {
+    position: relative;
+    top: -2px;
+  }
+
+  .board .note .ops .bulk {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 6;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    min-width: 176px;
+    padding: 4px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+
+  .board .note .ops:hover .bulk {
+    display: flex;
+    opacity: 1;
+    flex-direction: column;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    gap: 2px;
+  }
+
+  /* ---- Note ops dropdown: organized action groups ----
+     Row 1: "Color" label + larger swatches (20px dots, 36px hit area).
+     Row 2+: Collapse / Raw / Delete as full-width 36px rows.
+     Delete is separated by a rule and tinted as the destructive action. */
+  .board .note .ops .bulk .ops-colors {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px 8px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .board .note .ops .bulk .ops-colors-label {
+    flex: 1;
+    font-size: calc(10rem / 11);
+    letter-spacing: 0.05em;
+    color: #999;
+  }
+
+  .board .note .ops .bulk .ops-colors .sep {
+    display: none;
+  }
+
+  .board .note .ops .bulk .ops-colors button {
+    position: relative;
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .board .note .ops .bulk .ops-colors button::after {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+  }
+
+  .board .note .ops .bulk .ops-colors button.selected {
+    outline: 2px solid #1489db !important;
+    outline-offset: 2px;
+  }
+
+  .board .note .ops .bulk a {
+    flex: none;
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 4px 12px;
+    font-size: calc(11rem / 11);
+    border-radius: 2px;
+  }
+
+  .board .note .ops .bulk a:active {
+    background: #eee;
+  }
+
+  .board .note .ops .bulk a.warn {
+    margin-top: 3px;
+    border-top: 1px solid #eee;
+    padding-top: 6px;
+    border-radius: 0;
+    color: #c40;
+  }
+
+  .theme-dark .board .note .ops .bulk {
+    background: #202022;
+    border-color: #333;
+  }
+
+  .theme-dark .board .note .ops .bulk .ops-colors {
+    border-bottom-color: #333;
+  }
+
+  .theme-dark .board .note .ops .bulk .ops-colors-label {
+    color: #777;
+  }
+
+  .theme-dark .board .note .ops .bulk .ops-colors button.selected {
+    outline-color: #fc2 !important;
+  }
+
+  .theme-dark .board .note .ops .bulk a.warn {
+    border-top-color: #333;
+    color: #fc5555;
+  }
+
+  .theme-dark .board .note .ops .bulk a:active {
+    background: #333;
+  }
+
+  /* ---- Logo (compact, safe-area aware) ---- */
+  .logo {
+    top: calc(4px + env(safe-area-inset-top));
+    left: 4px;
+    padding: 5px 10px;
+  }
+
+  .logo .bulk a,
+  .logo .bulk .menu-label {
+    padding: 5px 0;
+  }
+
+  /* ---- TopBar (larger tap targets) ---- */
   .top-bar {
-    top: 4px;
+    top: calc(4px + env(safe-area-inset-top));
     right: 4px;
-    gap: 0;
+    gap: 2px;
   }
 
   .top-bar-btn {
-    padding: 2px 4px;
+    padding: 10px;
   }
 
   /* ---- Footer ---- */
   body {
-    padding-bottom: 44px;
+    padding-bottom: calc(44px + env(safe-area-inset-bottom));
   }
 
   .footer {
     font-size: calc(9rem / 11);
-    padding: 6px 0;
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
   }
 
   /* ---- Login ---- */
+  .login-page {
+    min-height: 100dvh;
+  }
+
   .login-card {
     width: calc(100% - 40px);
     max-width: 320px;
@@ -2190,7 +2488,9 @@ body.dragging {
 
   /* ---- Board List ---- */
   .board-list-page {
-    margin-top: 12px;
+    /* Clear the absolutely-positioned "SimpleBoard" logo above
+       (logo bottom is ~33px from the viewport top on mobile). */
+    margin-top: calc(48px + env(safe-area-inset-top));
     padding: 12px;
   }
 
@@ -2203,19 +2503,6 @@ body.dragging {
     gap: 8px;
   }
 
-  .board-add-form {
-    flex-wrap: wrap;
-  }
-
-  .board-add-input {
-    min-width: 0;
-  }
-
-  .board-add-actions {
-    white-space: nowrap;
-  }
-
-  /* ---- Board Card ---- */
   .board-card {
     padding: 14px 14px 24px;
   }
@@ -2224,14 +2511,44 @@ body.dragging {
     font-size: 13px;
   }
 
-  .board-card-created {
-    font-size: 9px;
+  /* Delete is hover-hidden on desktop; on touch it must be visible. */
+  .board-card-delete {
+    opacity: 0.7;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .board-add-btn {
+    padding: 14px 16px;
+  }
+
+  .board-add-form {
+    flex-wrap: wrap;
+  }
+
+  .board-add-input {
+    min-width: 0;
+    padding: 12px;
+  }
+
+  .board-add-actions {
+    white-space: nowrap;
+  }
+
+  .board-add-actions a {
+    display: inline-block;
+    padding: 10px 8px;
   }
 
   /* ---- Overlays ---- */
   .overlay > div {
+    box-sizing: border-box;
     margin-top: 20px;
     max-width: calc(100% - 32px);
+  }
+
+  .overlay > div.about {
+    padding: 40px 24px;
   }
 
   .overlay .backup-conf {
@@ -2251,32 +2568,26 @@ body.dragging {
 
   .help-overlay > div {
     padding: 24px 20px;
-    margin-top: 20px;
-    max-height: calc(100vh - 40px);
+    margin-top: calc(20px + env(safe-area-inset-top));
+    max-height: calc(100dvh - 40px);
   }
 
-  /* ---- Loading & Error screens ---- */
+  /* ---- Loading & Error screens (mobile viewport height) ---- */
   .loading-screen,
   .error-boundary {
+    height: 100dvh;
     width: 100%;
   }
 
-  /* ---- Note ops: larger tap target ---- */
-  .board .note .ops .teaser {
-    padding: 8px;
-    font-size: calc(14rem / 11);
-  }
-
-  .board .note .ops .bulk button {
-    position: relative;
-  }
-
-  .board .note .ops .bulk button::after {
-    content: "";
-    position: absolute;
-    top: -8px;
-    left: -8px;
-    right: -8px;
-    bottom: -8px;
+  /* ---- iOS: prevent auto-zoom when focusing small inputs ----
+     The app's base font is 11px; iOS Safari zooms into any focused
+     control smaller than 16px. Bumping just the focused control to
+     16px keeps the compact look while editing stays usable. */
+  .board .note .edit:focus,
+  .board .head .edit:focus,
+  .board-add-input:focus,
+  .overlay .backup-conf .etc input:focus,
+  .login-card input:focus {
+    font-size: 16px;
   }
 }

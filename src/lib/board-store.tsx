@@ -457,12 +457,27 @@ export function BoardProvider({ children }: { children: React.ReactNode }) {
   const futureRef = useRef<HistoryEntry[]>([]);
   const initialisedRef = useRef(false);
 
+  const [systemDark, setSystemDark] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    setSystemDark(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setSystemDark(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  const effectiveTheme: "light" | "dark" =
+    state.theme === "auto" ? (systemDark ? "dark" : "light") : state.theme;
+
   useEffect(() => {
     saveBoards(state.boards);
     saveActiveBoardId(state.activeBoardId || "");
     saveTheme(state.theme);
     saveFont(state.font);
+  }, [state]);
 
+  useEffect(() => {
     document.documentElement.classList.remove(
       "theme-light",
       "theme-dark",
@@ -473,10 +488,10 @@ export function BoardProvider({ children }: { children: React.ReactNode }) {
       "f-maven-pro"
     );
     document.documentElement.classList.add(
-      `theme-${state.theme}`,
+      `theme-${effectiveTheme}`,
       state.font
     );
-  }, [state]);
+  }, [effectiveTheme, state.font]);
 
   useEffect(() => {
     if (!initialisedRef.current) {

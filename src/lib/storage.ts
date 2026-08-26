@@ -50,7 +50,7 @@ export function saveTheme(theme: Theme): void {
 
 export function loadTheme(): Theme | null {
   const val = localStorage.getItem(key("nb-theme"));
-  if (val === "dark" || val === "light") return val;
+  if (val === "dark" || val === "light" || val === "auto") return val;
   return null;
 }
 

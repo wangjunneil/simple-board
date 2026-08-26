@@ -90,40 +90,22 @@ export default function ListColumn({
             <a href="#" onClick={(e) => { e.preventDefault(); handleAddNote(); }}>
               Add note
             </a>
-            {!isFirst && isLast && (
+            {!isFirst && (
               <a
                 href="#"
-                className="mov-list-l full"
+                className="mov-list-l"
                 onClick={(e) => { e.preventDefault(); onMoveLeft?.(); }}
               >
-                &lt; Move
+                Move left
               </a>
             )}
-            {!isFirst && !isLast && (
-              <>
-                <a
-                  href="#"
-                  className="mov-list-l half"
-                  onClick={(e) => { e.preventDefault(); onMoveLeft?.(); }}
-                >
-                  &lt; Mo
-                </a>
-                <a
-                  href="#"
-                  className="mov-list-r half"
-                  onClick={(e) => { e.preventDefault(); onMoveRight?.(); }}
-                >
-                  ve &gt;
-                </a>
-              </>
-            )}
-            {isFirst && !isLast && (
+            {!isLast && (
               <a
                 href="#"
-                className="mov-list-r full"
+                className="mov-list-r"
                 onClick={(e) => { e.preventDefault(); onMoveRight?.(); }}
               >
-                Move &gt;
+                Move right
               </a>
             )}
             <a

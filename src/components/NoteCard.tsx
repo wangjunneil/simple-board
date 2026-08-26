@@ -228,11 +228,21 @@ export default function NoteCard({
     { value: "#69f", label: "Blue" },
   ];
 
+  let completedDateStr = "";
+  if (isCompleted && note.completedAt) {
+    const d = new Date(note.completedAt);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    completedDateStr = `${yyyy}/${mm}/${dd}`;
+  }
+
   const classNames = [
     "note",
     editing ? "editing" : "",
     note.collapsed ? "collapsed" : "",
     note.raw ? "raw" : "",
+    completedDateStr ? "completed" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -242,15 +252,6 @@ export default function NoteCard({
     ...(note.color ? { borderLeft: `3px solid ${note.color}` } : {}),
     ...(isCompleted ? { textDecoration: "line-through", color: "#999" } : {}),
   };
-
-  let completedDateStr = "";
-  if (isCompleted && note.completedAt) {
-    const d = new Date(note.completedAt);
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    completedDateStr = `${yyyy}/${mm}/${dd}`;
-  }
 
   return (
     <div ref={setNodeRef} className={classNames} {...attributes} {...listeners} style={noteStyle}>
@@ -273,27 +274,31 @@ export default function NoteCard({
       <div className="ops">
         <span className="teaser" />
         <div className="bulk">
-          {colorOptions.map((opt) => (
-            <button
-              key={opt.value}
-              title={opt.label}
-              onClick={(e) => { e.preventDefault(); handleSetColor(opt.value); }}
-              style={{
-                width: "11px",
-                height: "11px",
-                borderRadius: "50%",
-                border: "none",
-                background: opt.value === "" ? "transparent" : opt.value,
-                cursor: "pointer",
-                padding: 0,
-                margin: 0,
-                boxShadow: opt.value === "" ? "inset 0 0 0 1.5px #999" : "none",
-                outline: note.color === opt.value ? "2px solid #fff" : "none",
-                flexShrink: 0,
-              }}
-            />
-          ))}
-          <span style={{ color: "#bbb", padding: "0 2px" }}>|</span>
+          <span className="ops-colors">
+            <span className="ops-colors-label">Color</span>
+            {colorOptions.map((opt) => (
+              <button
+                key={opt.value}
+                className={note.color === opt.value ? "selected" : undefined}
+                title={opt.label}
+                onClick={(e) => { e.preventDefault(); handleSetColor(opt.value); }}
+                style={{
+                  width: "11px",
+                  height: "11px",
+                  borderRadius: "50%",
+                  border: "none",
+                  background: opt.value === "" ? "transparent" : opt.value,
+                  cursor: "pointer",
+                  padding: 0,
+                  margin: 0,
+                  boxShadow: opt.value === "" ? "inset 0 0 0 1.5px #999" : "none",
+                  outline: note.color === opt.value ? "2px solid #fff" : "none",
+                  flexShrink: 0,
+                }}
+              />
+            ))}
+            <span className="sep" style={{ color: "#bbb", padding: "0 2px" }}>|</span>
+          </span>
           <a href="#" onClick={(e) => { e.preventDefault(); handleToggleCollapse(); }}>
             {note.collapsed ? "Expand" : "Collapse"}
           </a>

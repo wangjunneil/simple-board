@@ -22,7 +22,7 @@ export interface Board {
   createdAt: string;
 }
 
-export type Theme = "light" | "dark";
+export type Theme = "light" | "dark" | "auto";
 export type Font =
   | "f-barlow"
   | "f-ibm-plex"
